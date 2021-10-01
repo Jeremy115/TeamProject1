@@ -7,7 +7,7 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 /**
  *
- * @author Jerem
+ * @author Fenny
  */
 public class Shift {
     private String id; 
