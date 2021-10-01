@@ -8,7 +8,7 @@ package edu.jsu.mcis.cs310.tas_fa21;
 import java.sql.*;
 
 
-
+//THIS IS WHERE ALL DATABASE READ CODE WILL GO!!!
 /**
  *
  * @author Jerem
