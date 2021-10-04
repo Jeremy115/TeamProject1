@@ -5,6 +5,12 @@
  */
 package edu.jsu.mcis.cs310.tas_fa21;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+
 /**
  *
  * @author Andy
@@ -12,37 +18,94 @@ package edu.jsu.mcis.cs310.tas_fa21;
 public class Punch {
     //Variables
 
-	private String id; 
-	private String description; 
+     
+    
+	private int id; 
+	private int terminalid;
+        private String badgeid; 
+        private long originaltimestamp; 
+        private int punchtypeid;  
+        
+        private String adjustmenttype;
+        private long adjustedtimestamp;
 
 //Constructor
 
-	public Punch (String id, String description){
-	 this.id = id;
-	 this.description = description;
-	}
+      public Punch(Badge badge, int terminalid, int punchtypeid) {
+        this.badgeid = badge.getId();
+        this.terminalid = terminalid;
+        this.originaltimestamp = System.currentTimeMillis();
+        this.punchtypeid = punchtypeid;
+        this.id = 0;
+        this.adjustedtimestamp = 0; 
+        this.adjustmenttype = null;
+    }
 
 //Getters
 
-	public String getId()
+	public int getId()
 	{
 		return id; 
 	}
-	public String getDescription()
+	public int getDescription()
 	{
 		return id; 
 	}
+        public long getOriginaltimestamp() {
+                return originaltimestamp;
+        }
 
-//toString method that puts information into a formated string using StringBuilder
+        public int getPunchtypeid() {
+                return punchtypeid;
+        }
 
-	@Override
-	public String toString(){
-	//String id and description 
-	StringBuilder a = new StringBuilder(); 
-	//appends 
-	a.append('#').append(id).append(' '); 
-	a.append('(').append(description).append(' '); 
+        public String getAdjustmenttype() {
+                return adjustmenttype;
+        }
+        
+        //Setters, sets the value in the class instead. 
+        
+        public void setOriginalTimeStamp(long originaltimestamp) {
+                this.originaltimestamp = originaltimestamp;
+        }
+    
+        public void setId(int id) {
+                this.id = id;
+        }
 
-	return a.toString(); 
-	}  
+        public void setAdjustmenttype(String adjustmenttype) {
+                this.adjustmenttype = adjustmenttype;
+        }
+        
+
+	public String printOriginalTimestamp()
+        {
+            StringBuilder output = new StringBuilder();
+            Date date = new Date(originaltimestamp);
+
+            //Found easier code online to make string building easier. 
+            //Created case statement for each new instance of employee clocking out and in. 
+            //If neither happens then default case will time out. 
+            SimpleDateFormat formatter = new SimpleDateFormat("EEE MM/dd/yyyy HH:mm:ss");
+            String strDate = formatter.format(date);
+        
+        switch (punchtypeid) {
+            case 1:
+                output.append("#").append(badgeid).append(" ");
+                output.append("Clocked in: ");
+                break;
+            case 0:
+                output.append("#").append(badgeid).append(" ");
+                output.append("Clocked out: ");
+                break;
+            default:
+                output.append("#").append(badgeid).append(" ");
+                output.append("timed out: ");
+                break;
+        }
+ 
+        output.append(strDate.toUpperCase());
+            
+        return output.toString();
+     } 
 }

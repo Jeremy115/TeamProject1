@@ -30,7 +30,9 @@ public class Badge {
 	public String toString(){
 	//String id and description 
 	StringBuilder a = new StringBuilder(); 
-	//appends 
+
+        //Formatting the string, the sting is called a from the line above this
+        //comment. 
 	a.append('#').append(id).append(' '); 
 	a.append('(').append(description).append(' '); 
 
