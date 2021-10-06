@@ -4,9 +4,8 @@
  * and open the template in the editor.
  */
 package edu.jsu.mcis.cs310.tas_fa21;
-
 import java.sql.*;
-
+import java.time.LocalTime;
 
 //THIS IS WHERE ALL DATABASE READ CODE WILL GO!!!
 /**
@@ -50,17 +49,125 @@ public class TASDatabase {
         //ERRORS 
         // becareful here. Code will not compile, but here is where getBadge and get Punch will go. 
         //The Test package should be able to pick these up as we set them as the test package calls them. 
-        public Badge(){
-        //      code
+        public Badge getBadge(String id){
+            Badge outputBadge;
+            
+            try {
+                query = "SELECT * from tas.badge where id = \"" + id + "\"";
+                pstSelect = conn.prepareStatement(query);
+                
+                hasresults = pstSelect.execute();
+                
+                while (hasresults || pstSelect.getUpdateCount() != -1) {
+                    if (hasresults) {
+                        resultset = pstSelect.getResultSet();
+                        
+                        resultset.next();
+                        outputBadge = new Badge(resultset.getString("id"), resultset.getString("description"));
+                        
+                        return outputBadge;
+                    }
+                }
+            }
+            catch(SQLException e){ System.out.println("Error in getBadge()"); }
+            return null;
         }
-        public Punch(){
-          //  code
-        }
-        public Shift(){
-            //code 
-        }
-        
-        
-        
+        public Punch getPunch(int id){
+          Punch outputPunch;
+          
+          try {
+              query = "SELECT * from tas.punch where id = \"" + id + "\"";
+              pstSelect = conn.prepareStatement(query);
+              
+              hasresults = pstSelect.execute();
+              
+              while (hasresults || pstSelect.getUpdateCount() != -1) {
+                  if (hasresults) {
+                      
+                      resultset = pstSelect.getResultSet();
+                      resultset.next();
+                        int terminalid = resultset.getInt("terminalid");
+                        String badgeid = resultset.getString("badgeid");
+                        long originaltimestamp = resultset.getTimestamp("originaltimestamp").getTime(); 
+                        int punchtypeid = resultset.getInt("punchtypeid");
+                        
+                        outputPunch = new Punch(getBadge(badgeid), terminalid, punchtypeid);
+                        outputPunch.setOriginalTimeStamp(originaltimestamp);
+
+                        return outputPunch;
+                        
+                    }
+                }   
+            }
+            catch(SQLException e){System.out.println(e);}
+            
+            return null;
+	}
+        public Shift getShift(int id){ // method of the database class and provide the shift ID as a parameter.
+            Shift outputShift;
+            
+            try{
+               
+                // Prepare select query
+                query = "SELECT * FROM tas.shift WHERE id = " + id;
+                pstSelect = conn.prepareStatement(query);
+               
+                // Execute select query
+                hasresults = pstSelect.execute();
+               
+                while(hasresults || pstSelect.getUpdateCount() != -1 ){
+                    if(hasresults){
+                       
+                        resultset = pstSelect.getResultSet();
+                        resultset.next();
+                       
+                        String description = resultset.getString("description");
+                        LocalTime start = LocalTime.parse(resultset.getString("start"));
+                        LocalTime stop = LocalTime.parse(resultset.getString("stop"));
+                        int interval = resultset.getInt("interval");
+                        int graceperiod = resultset.getInt("graceperiod");
+                        int dock = resultset.getInt("dock");
+                        LocalTime lunchstart = LocalTime.parse(resultset.getString("lunchstart"));
+                        LocalTime lunchstop = LocalTime.parse(resultset.getString("lunchstop"));
+                        int lunchdeduct = resultset.getInt("lunchdeduct");
+                       
+                        outputShift = new Shift(id, description, start, stop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
+                       
+                        return outputShift;
+                    }
+                }
+            }
+            catch(SQLException e){System.out.println(e);}
+            
+            return null;
+	}
+	
+	public Shift getShift(Badge badge){
+            try{
+               
+
+                query = "SELECT * FROM tas.employee WHERE badgeid = \"" + badge.getId() + "\"";
+                pstSelect = conn.prepareStatement(query);
+               
+                hasresults = pstSelect.execute();
+               
+                while(hasresults || pstSelect.getUpdateCount() != -1 ){
+                    if(hasresults){
+                       
+                        resultset = pstSelect.getResultSet();
+                        resultset.next();
+                        
+                        int shiftid = resultset.getInt("shiftid");
+                        
+                        return getShift(shiftid); 
+                    }
+                    
+                }
+                
+            }
+            catch(SQLException e){System.out.println(e);}
+            
+            return null;
+	}
 }
 
