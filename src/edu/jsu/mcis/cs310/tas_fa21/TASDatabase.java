@@ -24,13 +24,14 @@ public class TASDatabase {
 		try {
                     /* Identify the Server */
                     
-                    String server = ("jdbc:mysql://localhost/tas");
+                    String server = ("jdbc:mysql://localhost/TAS");
                     String username = "team";
                     String password = "CS488";
+                    System.out.println("Connecting to " + server + "...");
                     
                     /* Load the MySQL JDBC Driver */
             
-                   // Class.forName("com.mysql.jdbc.Driver").newInstance();
+                    Class.forName("com.mysql.jdbc.Driver").newInstance();
                     
                     /* Open Connection */
 
@@ -40,11 +41,20 @@ public class TASDatabase {
                         throw new SQLException();
                     }
                 }
-               // catch(SQLException e){ System.out.println("SQL Connection failed! Invalid database setup?"); }
-                //catch(ClassNotFoundException e){ System.out.println("JDBC driver not found, make sure MySQLDriver is added as a library!"); }
+                catch(SQLException e){ System.out.println("SQL Connection failed! Invalid database setup?"); }
+                catch(ClassNotFoundException e){ System.out.println("JDBC driver not found, make sure MySQLDriver is added as a library!"); }
                 catch (Exception e){}
 	}
-        
+        public void close(){
+            try {
+                conn.close();
+            }
+            catch(SQLException e){}
+            finally{
+                if (resultset != null) { try { resultset.close(); resultset = null; } catch (SQLException e) {} }
+                if (pstSelect != null) { try { pstSelect.close(); pstSelect = null; } catch (SQLException e) {} }
+            }
+	}
         
         //ERRORS 
         // becareful here. Code will not compile, but here is where getBadge and get Punch will go. 
@@ -72,11 +82,12 @@ public class TASDatabase {
             catch(SQLException e){ System.out.println("Error in getBadge()"); }
             return null;
         }
+        
         public Punch getPunch(int id){
           Punch outputPunch;
           
           try {
-              query = "SELECT * from tas.punch where id = \"" + id + "\"";
+              query = "SELECT * from tas.punch where id = \"" + id;
               pstSelect = conn.prepareStatement(query);
               
               hasresults = pstSelect.execute();
@@ -86,15 +97,15 @@ public class TASDatabase {
                       
                       resultset = pstSelect.getResultSet();
                       resultset.next();
-                        int terminalid = resultset.getInt("terminalid");
-                        String badgeid = resultset.getString("badgeid");
-                        long originaltimestamp = resultset.getTimestamp("originaltimestamp").getTime(); 
-                        int punchtypeid = resultset.getInt("punchtypeid");
+                      int terminalid = resultset.getInt("terminalid");
+                      String badgeid = resultset.getString("badgeid");
+                      long originaltimestamp = resultset.getTimestamp("originaltimestamp").getTime(); 
+                      int punchtypeid = resultset.getInt("punchtypeid");
                         
-                        outputPunch = new Punch(getBadge(badgeid), terminalid, punchtypeid);
-                        outputPunch.setOriginalTimeStamp(originaltimestamp);
+                      outputPunch = new Punch(getBadge(badgeid), terminalid, punchtypeid);
+                      outputPunch.setOriginalTimeStamp(originaltimestamp);
 
-                        return outputPunch;
+                      return outputPunch;
                         
                     }
                 }   
@@ -146,7 +157,7 @@ public class TASDatabase {
             try{
                
 
-                query = "SELECT * FROM tas.employee WHERE badgeid = \"" + badge.getId() + "\"";
+                query = "SELECT * FROM tas.employee WHERE badgeid = \""+ badge.getId() +"\"";
                 pstSelect = conn.prepareStatement(query);
                
                 hasresults = pstSelect.execute();
