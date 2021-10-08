@@ -25,7 +25,6 @@ public class Punch {
         private String badgeid; 
         private long originaltimestamp; 
         private int punchtypeid;  
-        
         private String adjustmenttype;
         private long adjustedtimestamp;
 
@@ -46,11 +45,14 @@ public class Punch {
 	public int getId()
 	{
 		return id; 
-	}
-	public int getDescription()
-	{
-		return id; 
-	}
+	}	
+        
+        public int getTerminalid(){
+            return terminalid;
+        }
+        public String getBadgeid(){
+            return badgeid;
+        }
         public long getOriginaltimestamp() {
                 return originaltimestamp;
         }
@@ -62,8 +64,6 @@ public class Punch {
         public String getAdjustmenttype() {
                 return adjustmenttype;
         }
-        
-        //Setters, sets the value in the class instead. 
         
         public void setOriginalTimeStamp(long originaltimestamp) {
                 this.originaltimestamp = originaltimestamp;
@@ -78,7 +78,8 @@ public class Punch {
         }
         
 
-	public String printOriginalTimestamp()
+//	public String printOriginalTimestamp()
+        public String printOriginal()
         {
             StringBuilder output = new StringBuilder();
             Date date = new Date(originaltimestamp);
@@ -92,15 +93,15 @@ public class Punch {
         switch (punchtypeid) {
             case 1:
                 output.append("#").append(badgeid).append(" ");
-                output.append("Clocked in: ");
+                output.append("CLOCKED IN: ");
                 break;
             case 0:
                 output.append("#").append(badgeid).append(" ");
-                output.append("Clocked out: ");
+                output.append("CLOCKED OUT: ");
                 break;
             default:
                 output.append("#").append(badgeid).append(" ");
-                output.append("timed out: ");
+                output.append("TIMED OUT: ");
                 break;
         }
  

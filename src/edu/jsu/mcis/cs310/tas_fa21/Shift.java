@@ -14,7 +14,7 @@ import static java.time.temporal.ChronoUnit.MINUTES;
  *
  */
 public class Shift {
-    private String id; //Pulling from database
+    private int id; //Pulling from database
     private String description;//Pulling from database 
     
     private int interval; 
@@ -31,7 +31,7 @@ public class Shift {
 
 //Constructor
 
-	public Shift (String id, String description, 
+	public Shift (int id, String description, 
                 LocalTime start, LocalTime stop, int interval, 
                 int gracePeriod, int dock, LocalTime lunchStart,
                 LocalTime lunchStop, int lunchDeductTime){
@@ -57,13 +57,13 @@ public class Shift {
 
 //Getters
 
-	public String getId()
+	public int getId()
 	{
 		return id; 
 	}
 	public String getDescription()
 	{
-		return id; 
+		return description; 
 	}
         
         public LocalTime getStart() {
@@ -119,9 +119,15 @@ public class Shift {
         //currently this string will display: 
         //Employee: ID# - (DESCRIPTION): (START) - (END).  
         
-        a.append("Employee: ").append(id).append(" - "); 
-	a.append(description).append(":").append(' '); 
-	a.append(start).append(" - ").append(stop); 
+        // a.append("Employee: ").append(id).append(" - "); 
+	// a.append(description).append(":").append(' '); 
+	// a.append(start).append(" - ").append(stop);
+        
+        a.append(description).append(": ");
+        a.append(start).append(" - ").append(stop);
+        a.append(" (").append(shiftduration).append(" minutes);");
+        a.append(" Lunch: ").append(lunchstart).append(" - ").append(lunchstop);
+        a.append(" (").append(lunchduration).append(" minutes)");
         
 
 	return a.toString(); 
