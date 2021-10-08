@@ -24,14 +24,14 @@ public class TASDatabase {
 		try {
                     /* Identify the Server */
                     
-                    String server = ("jdbc:mysql://localhost/TAS");
+                    String server = ("jdbc:mysql://localhost/tas_fa21_v1");
                     String username = "team";
                     String password = "CS488";
                     System.out.println("Connecting to " + server + "...");
                     
                     /* Load the MySQL JDBC Driver */
             
-                    Class.forName("com.mysql.jdbc.Driver").newInstance();
+                    //Class.forName("com.mysql.jdbc.Driver");
                     
                     /* Open Connection */
 
@@ -42,7 +42,7 @@ public class TASDatabase {
                     }
                 }
                 catch(SQLException e){ System.out.println("SQL Connection failed! Invalid database setup?"); }
-                catch(ClassNotFoundException e){ System.out.println("JDBC driver not found, make sure MySQLDriver is added as a library!"); }
+                //catch(ClassNotFoundException e){ System.out.println("JDBC driver not found, make sure MySQLDriver is added as a library!"); }
                 catch (Exception e){}
 	}
         public void close(){
