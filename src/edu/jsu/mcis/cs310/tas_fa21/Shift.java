@@ -123,6 +123,8 @@ public class Shift {
 	// a.append(description).append(":").append(' '); 
 	// a.append(start).append(" - ").append(stop);
         
+        
+        // NEEDS TO FORMAT AS Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)
         a.append(description).append(": ");
         a.append(start).append(" - ").append(stop);
         a.append(" (").append(shiftduration).append(" minutes);");

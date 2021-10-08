@@ -93,15 +93,15 @@ public class Punch {
         switch (punchtypeid) {
             case 1:
                 output.append("#").append(badgeid).append(" ");
-                output.append("CLOCKED IN: ");
+                output.append("CLOCK IN: ");
                 break;
             case 0:
                 output.append("#").append(badgeid).append(" ");
-                output.append("CLOCKED OUT: ");
+                output.append("CLOCK OUT: ");
                 break;
             default:
                 output.append("#").append(badgeid).append(" ");
-                output.append("TIMED OUT: ");
+                output.append("TIME OUT: ");
                 break;
         }
  
