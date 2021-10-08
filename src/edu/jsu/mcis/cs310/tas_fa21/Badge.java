@@ -5,8 +5,8 @@ package edu.jsu.mcis.cs310.tas_fa21;
 public class Badge {
     //Variables
 
-	private final String id; 
-	private final String description; 
+	public final String id; 
+	public final String description; 
 
 //Constructor
 
@@ -35,8 +35,8 @@ public class Badge {
 
         //Formatting the string, the sting is called a from the line above this
         //comment. 
-	a.append('#').append(this.id).append(' '); 
-	a.append('(').append(this.description).append(')'); 
+	a.append('#').append(id).append(' '); 
+	a.append('(').append(description).append(')'); 
 
 	return a.toString(); 
 	}  

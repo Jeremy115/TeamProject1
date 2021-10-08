@@ -60,10 +60,10 @@ public class TASDatabase {
         // becareful here. Code will not compile, but here is where getBadge and get Punch will go. 
         //The Test package should be able to pick these up as we set them as the test package calls them. 
         public Badge getBadge(String id){
-            Badge outputBadge;
+            Badge outputBadge ;
             
             try {
-                query = "SELECT * from tas.badge where id = \"" + id + "\"";
+                query = "SELECT * from badge where id = \"" + id + "\"";
                 pstSelect = conn.prepareStatement(query);
                 
                 hasresults = pstSelect.execute();
@@ -87,7 +87,7 @@ public class TASDatabase {
           Punch outputPunch;
           
           try {
-              query = "SELECT * from tas.punch where id = \"" + id;
+              query = "SELECT * FROM punch WHERE id = \"" + id +"\"";
               pstSelect = conn.prepareStatement(query);
               
               hasresults = pstSelect.execute();
@@ -120,7 +120,7 @@ public class TASDatabase {
             try{
                
                 // Prepare select query
-                query = "SELECT * FROM tas.shift WHERE id = " + id;
+                query = "SELECT * FROM shift WHERE id = " + id;
                 pstSelect = conn.prepareStatement(query);
                
                 // Execute select query
@@ -157,7 +157,7 @@ public class TASDatabase {
             try{
                
 
-                query = "SELECT * FROM tas.employee WHERE badgeid = \""+ badge.getId() +"\"";
+                query = "SELECT * FROM employee WHERE badgeid = \""+ badge.getId() +"\"";
                 pstSelect = conn.prepareStatement(query);
                
                 hasresults = pstSelect.execute();
