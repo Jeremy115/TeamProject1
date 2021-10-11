@@ -47,12 +47,7 @@ public class Shift {
         this.lunchDeductTime = lunchDeductTime;
         this.lunchduration = MINUTES.between(lunchstart, lunchstop);
         this.shiftduration = MINUTES.between(start, stop);
-          /*
-	 this.id = id;
-	 this.description = description;
-         this.lunchduration = MINUTES.between(lunchstart, lunchstop); 
-         this.shiftduration = shiftduration; 
-*/
+        //comments
 	}
 
 //Getters
