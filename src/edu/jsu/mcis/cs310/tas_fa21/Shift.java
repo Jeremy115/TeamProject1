@@ -33,8 +33,8 @@ public class Shift {
 
 	public Shift (int id, String description, 
                 LocalTime start, LocalTime stop, int interval, 
-                int gracePeriod, int dock, LocalTime lunchStart,
-                LocalTime lunchStop, int lunchDeductTime){
+                int gracePeriod, int dock, LocalTime lunchstart,
+                LocalTime lunchstop, int lunchDeductTime){
         this.id = id;
         this.description = description;
         this.start = start; // Start time of employee shift
@@ -45,7 +45,7 @@ public class Shift {
         this.lunchstart = lunchstart; // 
         this.lunchstop = lunchstop;
         this.lunchDeductTime = lunchDeductTime;
-        this.lunchduration = MINUTES.between(lunchStart, lunchStop);
+        this.lunchduration = MINUTES.between(lunchstart, lunchstop);
         this.shiftduration = MINUTES.between(start, stop);
           /*
 	 this.id = id;

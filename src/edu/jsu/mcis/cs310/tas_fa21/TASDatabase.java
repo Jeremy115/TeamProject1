@@ -134,7 +134,8 @@ public class TASDatabase {
                        
                         String description = resultset.getString("description");
                         LocalTime start = LocalTime.parse(resultset.getString("start"));
-                        LocalTime stop = LocalTime.parse(resultset.getString("stop"));
+                        LocalTime stop = LocalTime.parse(resultset.getString("stop")); 
+                        //String stop = resultset.getString("stop");
                         int interval = resultset.getInt("interval");
                         int graceperiod = resultset.getInt("graceperiod");
                         int dock = resultset.getInt("dock");
@@ -142,8 +143,9 @@ public class TASDatabase {
                         LocalTime lunchstop = LocalTime.parse(resultset.getString("lunchstop"));
                         int lunchdeduct = resultset.getInt("lunchdeduct");
                        
-                        outputShift = new Shift(id,description, start, stop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
                        
+                        outputShift = new Shift(id,description, start, stop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
+                       System.out.println(outputShift);
                         return outputShift; 
                     }
                 }
