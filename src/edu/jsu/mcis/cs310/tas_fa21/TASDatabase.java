@@ -120,7 +120,7 @@ public class TASDatabase {
             try{
                
                 // Prepare select query
-                query = "SELECT * FROM shift WHERE id = " + id;
+                query = "SELECT * FROM tas_fa21_v1.shift WHERE id = " + id;
                 pstSelect = conn.prepareStatement(query);
                
                 // Execute select query
@@ -142,22 +142,22 @@ public class TASDatabase {
                         LocalTime lunchstop = LocalTime.parse(resultset.getString("lunchstop"));
                         int lunchdeduct = resultset.getInt("lunchdeduct");
                        
-                        outputShift = new Shift(id, description, start, stop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
+                        outputShift = new Shift(id,description, start, stop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
                        
-                        return outputShift;
+                        return outputShift; 
                     }
                 }
             }
             catch(SQLException e){System.out.println(e);}
-            
             return null;
 	}
 	
 	public Shift getShift(Badge badge){
+           
             try{
                
 
-                query = "SELECT * FROM employee WHERE badgeid = \""+ badge.getId() +"\"";
+                query = "SELECT * FROM tas_fa21_v1.employee WHERE badgeid = \""+ badge.getId() +"\"";
                 pstSelect = conn.prepareStatement(query);
                
                 hasresults = pstSelect.execute();
@@ -177,7 +177,6 @@ public class TASDatabase {
                 
             }
             catch(SQLException e){System.out.println(e);}
-            
             return null;
 	}
 }
