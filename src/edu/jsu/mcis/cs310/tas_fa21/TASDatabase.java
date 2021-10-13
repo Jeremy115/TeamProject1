@@ -5,7 +5,13 @@
  */
 package edu.jsu.mcis.cs310.tas_fa21;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 //THIS IS WHERE ALL DATABASE READ CODE WILL GO!!!
 /**
@@ -16,9 +22,11 @@ public class TASDatabase {
 
         private Connection conn = null;
         private String query;
-        private PreparedStatement pstSelect = null;
+        private PreparedStatement pstSelect = null, pstUpdate = null;
+        
         private ResultSet resultset = null;
         private boolean hasresults;
+        private int updateCount; 
         
         public TASDatabase(){
 		try {
@@ -181,5 +189,54 @@ public class TASDatabase {
             catch(SQLException e){System.out.println(e);}
             return null;
 	}
+        public int insertPunch(Punch p){
+           
+          long originalTime = p.getOriginaltimestamp();
+          String badgeid = p.getBadgeid(); 
+          int terminalid = p.getTerminalid(); 
+          int punchtypeid = p.getPunchtypeid(); 
+          
+         // DateTimeFormatter dtf =  DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+         // (original.format(dtf)); FORMATING FOR dtf. 
+         //GregorianCalendar formatting allows us to use setTimeInMillis function.
+         //makes it easier.
+         GregorianCalendar ots = new GregorianCalendar(); 
+         ots.setTimeInMillis(originalTime);
+         
+         String originalTimeStamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
+         
+         
+         try{
+             query = "INSERT INTO tas_fa21_v1.punch (terminalid, badgeid, originaltimestamp, punchtypeid) VALUES (?, ?, ?, ?)"; 
+             pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS); 
+             
+             pstUpdate.setInt(1, terminalid);
+             pstUpdate.setString(2, badgeid);
+             pstUpdate.setString(3, originalTimeStamp);
+             pstUpdate.setInt(4, punchtypeid);
+             
+             updateCount = pstUpdate.executeUpdate();
+             
+             if(updateCount > 0){
+                 
+                 resultset = pstUpdate.getGeneratedKeys(); 
+                 
+                 if (resultset.next()){
+                     return resultset.getInt(1);
+                 }
+             }
+             
+             
+         }
+         catch(SQLException e){ System.out.println(e);}
+         return 0;    
+    }
+        public ArrayList<Punch> getDailyPunchList(Badge badge, long ts){
+            
+            
+            
+            return null;
+            
+        }
 }
 
