@@ -7,6 +7,8 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
@@ -17,26 +19,24 @@ import java.util.Locale;
  */
 public class Punch {
     //Variables
-
-     
     
 	private int id; 
 	private int terminalid;
         private String badgeid; 
-        private long originaltimestamp; 
-        private int punchtypeid;  
+        private LocalDateTime originaltimestamp; 
+        private PunchType punchtypeid;  
         private String adjustmenttype;
-        private long adjustedtimestamp;
+        private LocalDateTime adjustedtimestamp;
 
 //Constructor
 
-      public Punch(Badge badge, int terminalid, int punchtypeid) {
+      public Punch(Badge badge, int terminalid, PunchType punchtypeid) {
         this.badgeid = badge.getId();
         this.terminalid = terminalid;
-        this.originaltimestamp = System.currentTimeMillis();
+        this.originaltimestamp = LocalDateTime.now();
         this.punchtypeid = punchtypeid;
         this.id = 0;
-        this.adjustedtimestamp = 0; 
+        this.adjustedtimestamp = LocalDateTime.now(); 
         this.adjustmenttype = null;
     }
 
@@ -53,11 +53,11 @@ public class Punch {
         public String getBadgeid(){
             return badgeid;
         }
-        public long getOriginaltimestamp() {
+        public LocalDateTime getOriginaltimestamp() {
                 return originaltimestamp;
         }
 
-        public int getPunchtypeid() {
+        public PunchType getPunchtypeid() {
                 return punchtypeid;
         }
 
@@ -65,7 +65,7 @@ public class Punch {
                 return adjustmenttype;
         }
         
-        public void setOriginalTimeStamp(long originaltimestamp) {
+        public void setOriginalTimeStamp(LocalDateTime originaltimestamp) {
                 this.originaltimestamp = originaltimestamp;
         }
     
@@ -79,34 +79,29 @@ public class Punch {
         
 
 //	public String printOriginalTimestamp()
-        public String printOriginal()
-        {
-            StringBuilder output = new StringBuilder();
-            Date date = new Date(originaltimestamp);
+        public String printOriginal() {
+            
+            StringBuilder s = new StringBuilder();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
+            
+            // #D2C39273 CLOCK IN: WED 09/05/2018 07:00:07
+            
+            s.append("#").append(badgeid).append(" ").append(punchtypeid);
+            s.append(": ").append((formatter.format(originaltimestamp)).toUpperCase());
+            
+            
+            // Date date = new Date(originaltimestamp);
 
             //Found easier code online to make string building easier. 
             //Created case statement for each new instance of employee clocking out and in. 
             //If neither happens then default case will time out. 
-            SimpleDateFormat formatter = new SimpleDateFormat("EEE MM/dd/yyyy HH:mm:ss");
-            String strDate = formatter.format(date);
-        
-        switch (punchtypeid) {
-            case 1:
-                output.append("#").append(badgeid).append(" ");
-                output.append("CLOCK IN: ");
-                break;
-            case 0:
-                output.append("#").append(badgeid).append(" ");
-                output.append("CLOCK OUT: ");
-                break;
-            default:
-                output.append("#").append(badgeid).append(" ");
-                output.append("TIME OUT: ");
-                break;
-        }
- 
-        output.append(strDate.toUpperCase());
             
-        return output.toString();
+            //String strDate = formatter.format(date);
+
+
+
+            //output.append(strDate.toUpperCase());
+
+            return s.toString();
      } 
 }

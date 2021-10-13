@@ -8,6 +8,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -95,8 +96,10 @@ public class TASDatabase {
           Punch outputPunch;
           
           try {
-              query = "SELECT * FROM punch WHERE id = \"" + id +"\"";
+              query = "SELECT * FROM punch WHERE id = ?";
               pstSelect = conn.prepareStatement(query);
+              
+              pstSelect.setInt(1, id);
               
               hasresults = pstSelect.execute();
               
@@ -107,10 +110,10 @@ public class TASDatabase {
                       resultset.next();
                       int terminalid = resultset.getInt("terminalid");
                       String badgeid = resultset.getString("badgeid");
-                      long originaltimestamp = resultset.getTimestamp("originaltimestamp").getTime(); 
+                      LocalDateTime originaltimestamp = resultset.getTimestamp("originaltimestamp").toLocalDateTime(); 
                       int punchtypeid = resultset.getInt("punchtypeid");
                         
-                      outputPunch = new Punch(getBadge(badgeid), terminalid, punchtypeid);
+                      outputPunch = new Punch(getBadge(badgeid), terminalid, PunchType.values()[punchtypeid]);
                       outputPunch.setOriginalTimeStamp(originaltimestamp);
 
                       return outputPunch;
@@ -191,19 +194,14 @@ public class TASDatabase {
 	}
         public int insertPunch(Punch p){
            
-          long originalTime = p.getOriginaltimestamp();
+          LocalDateTime originalTime = p.getOriginaltimestamp();
           String badgeid = p.getBadgeid(); 
           int terminalid = p.getTerminalid(); 
-          int punchtypeid = p.getPunchtypeid(); 
+          PunchType punchtypeid = p.getPunchtypeid(); 
           
-         // DateTimeFormatter dtf =  DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-         // (original.format(dtf)); FORMATING FOR dtf. 
-         //GregorianCalendar formatting allows us to use setTimeInMillis function.
-         //makes it easier.
-         GregorianCalendar ots = new GregorianCalendar(); 
-         ots.setTimeInMillis(originalTime);
          
-         String originalTimeStamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
+         
+         //String originalTimeStamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
          
          
          try{
@@ -212,8 +210,8 @@ public class TASDatabase {
              
              pstUpdate.setInt(1, terminalid);
              pstUpdate.setString(2, badgeid);
-             pstUpdate.setString(3, originalTimeStamp);
-             pstUpdate.setInt(4, punchtypeid);
+             pstUpdate.setTimestamp(3, Timestamp.valueOf(originalTime));
+             pstUpdate.setInt(4, punchtypeid.ordinal());
              
              updateCount = pstUpdate.executeUpdate();
              
@@ -231,11 +229,28 @@ public class TASDatabase {
          catch(SQLException e){ System.out.println(e);}
          return 0;    
     }
-        public ArrayList<Punch> getDailyPunchList(Badge badge, long ts){
+        public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDate date){
             
             
+            //Punch variables.
+            Punch obj; 
+            ArrayList<Punch> output = new ArrayList<>(); 
+            String strbadge = badge.getId();
             
-            return null;
+            //GregorianCalendar timeformat = new GregorianCalendar(); 
+            //timeformat.setTimeInMillis(date);
+            DateTimeFormatter dtf =  
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            dtf.format(date);
+            
+            try{
+                //query = 
+                
+                
+            }
+            catch(Exception e){ e.printStackTrace(); }
+            
+            return output;
             
         }
 }
