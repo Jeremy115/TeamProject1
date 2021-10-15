@@ -239,18 +239,17 @@ public class TASDatabase {
             
             //GregorianCalendar timeformat = new GregorianCalendar(); 
             //timeformat.setTimeInMillis(date);
-            DateTimeFormatter dtf =  
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            // DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             //dtf.format(date);
-            date = format(dtf);
+            
             
             try{
-                query = "SELECT FROM tas_fa21_v1.badgeid WHERE badgeid = ? AND DATA(Timestamp) = ?"; 
+                query = "SSELECT * FROM badge WHERE id = ? AND DATA(Timestamp) = ?"; 
                 
                 pstSelect = conn.prepareStatement(query);
                 
                 pstSelect.setString(1, strbadge);
-                pstSelect.setDate(2, date);
+                pstSelect.setDate(2, java.sql.Date.valueOf(date));
                 
                 hasresults = pstSelect.execute();
                 
