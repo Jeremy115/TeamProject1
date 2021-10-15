@@ -241,17 +241,51 @@ public class TASDatabase {
             //timeformat.setTimeInMillis(date);
             DateTimeFormatter dtf =  
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            dtf.format(date);
+            //dtf.format(date);
+            date = format(dtf);
             
             try{
-                //query = 
+                query = "SELECT FROM tas_fa21_v1.badgeid WHERE badgeid = ? AND DATA(Timestamp) = ?"; 
                 
+                pstSelect = conn.prepareStatement(query);
                 
-            }
-            catch(Exception e){ e.printStackTrace(); }
+                pstSelect.setString(1, strbadge);
+                pstSelect.setDate(2, date);
+                
+                hasresults = pstSelect.execute();
+                
+                 while(hasresults || pstSelect.getUpdateCount() != -1 ){
+                    if(hasresults){
+                        
+                        resultset = pstSelect.getResultSet();
+                        
+                        while(resultset.next()){
+                            
+                            int terminalid = resultset.getInt("terminalid");
+                            int punchtypeid = resultset.getInt("punchtypeid");
+                            
+                            obj = new Punch(terminalid, punchtypeid, badge);
+                            obj.setOriginalTimeStamp(resultset.getTimestamp("TimeStamp").getTime());
+                            
+                            output.add(obj);
+  
+                        }
+                    
+                    }
+                    else{
+                        updateCount = pstSelect.getUpdateCount();
+                       if(updateCount == -1){
+                           break;
+                        }
+                   }
+                 hasresults = pstSelect.getMoreResults(); 
+                 }   
+             }
+            catch(SQLException e){ System.out.println(e);/*printStackTrace();*/ }
             
             return output;
             
         }
-}
+    }
+
 
