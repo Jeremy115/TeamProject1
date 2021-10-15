@@ -195,7 +195,7 @@ public class TASDatabase {
         public int insertPunch(Punch p){
            
           LocalDateTime originalTime = p.getOriginaltimestamp();
-          String badgeid = p.getBadge(); 
+          Badge badge = p.getBadge(); 
           int terminalid = p.getTerminalid(); 
           PunchType punchtypeid = p.getPunchtype(); 
           
@@ -209,7 +209,7 @@ public class TASDatabase {
              pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS); 
              
              pstUpdate.setInt(1, terminalid);
-             pstUpdate.setString(2, badgeid);
+             pstUpdate.setString(2, badge.getId());
              pstUpdate.setTimestamp(3, Timestamp.valueOf(originalTime));
              pstUpdate.setInt(4, punchtypeid.ordinal());
              
@@ -237,14 +237,10 @@ public class TASDatabase {
             ArrayList<Punch> output = new ArrayList<>(); 
             String strbadge = badge.getId();
             
-            //GregorianCalendar timeformat = new GregorianCalendar(); 
-            //timeformat.setTimeInMillis(date);
-            // DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            //dtf.format(date);
             
             
             try{
-                query = "SSELECT * FROM badge WHERE id = ? AND DATA(Timestamp) = ?"; 
+                query = "SELECT * FROM badge WHERE id = ? AND DATA(Timestamp) = ?"; 
                 
                 pstSelect = conn.prepareStatement(query);
                 
@@ -263,8 +259,8 @@ public class TASDatabase {
                             int terminalid = resultset.getInt("terminalid");
                             int punchtypeid = resultset.getInt("punchtypeid");
                             
-                            obj = new Punch(terminalid, punchtypeid, badge);
-                            obj.setOriginalTimeStamp(resultset.getTimestamp("TimeStamp").getTime());
+                            obj = new Punch(punchtypeid, badge, terminalid);
+                            
                             
                             output.add(obj);
   

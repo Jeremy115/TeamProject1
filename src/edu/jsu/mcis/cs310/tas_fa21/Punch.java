@@ -22,7 +22,7 @@ public class Punch {
     
 	private int id; 
 	private int terminalid;
-        private String badgeid; 
+        private Badge badgeid; 
         private LocalDateTime originaltimestamp; 
         private PunchType punchtypeid;  
         private String adjustmenttype;
@@ -31,7 +31,7 @@ public class Punch {
 //Constructor
 
       public Punch(Badge badge, int terminalid, PunchType punchtypeid) {
-        this.badgeid = badge.getId();
+        //this.badgeid = badge.getId();
         this.terminalid = terminalid;
         this.originaltimestamp = LocalDateTime.now();
         this.punchtypeid = punchtypeid;
@@ -50,7 +50,7 @@ public class Punch {
         public int getTerminalid(){
             return terminalid;
         }
-        public String getBadge(){
+        public Badge getBadge(){
             return badgeid;
         }
         public LocalDateTime getOriginaltimestamp() {
