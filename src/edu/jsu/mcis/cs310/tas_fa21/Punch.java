@@ -50,14 +50,14 @@ public class Punch {
         public int getTerminalid(){
             return terminalid;
         }
-        public String getBadgeid(){
+        public String getBadge(){
             return badgeid;
         }
         public LocalDateTime getOriginaltimestamp() {
                 return originaltimestamp;
         }
 
-        public PunchType getPunchtypeid() {
+        public PunchType getPunchtype() {
                 return punchtypeid;
         }
 

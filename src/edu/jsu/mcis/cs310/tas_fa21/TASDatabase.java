@@ -195,9 +195,9 @@ public class TASDatabase {
         public int insertPunch(Punch p){
            
           LocalDateTime originalTime = p.getOriginaltimestamp();
-          String badgeid = p.getBadgeid(); 
+          String badgeid = p.getBadge(); 
           int terminalid = p.getTerminalid(); 
-          PunchType punchtypeid = p.getPunchtypeid(); 
+          PunchType punchtypeid = p.getPunchtype(); 
           
          
          
