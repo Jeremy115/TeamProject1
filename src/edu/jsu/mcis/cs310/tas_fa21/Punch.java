@@ -30,8 +30,9 @@ public class Punch {
 
 //Constructor
 
-      public Punch(Badge badge, int terminalid, PunchType punchtypeid) {
-        //this.badgeid = badge.getId();
+      public Punch(Badge badgeid, int terminalid, PunchType punchtypeid) {
+          
+        this.badgeid = badgeid.getId();//badgeid.getId(); 
         this.terminalid = terminalid;
         this.originaltimestamp = LocalDateTime.now();
         this.punchtypeid = punchtypeid;
@@ -86,7 +87,7 @@ public class Punch {
             
             // #D2C39273 CLOCK IN: WED 09/05/2018 07:00:07
             
-            s.append("#").append(badgeid).append(" ").append(punchtypeid);
+            s.append(' ').append(badgeid).append(" ").append(punchtypeid);
             s.append(": ").append((formatter.format(originaltimestamp)).toUpperCase());
             
             

@@ -240,7 +240,7 @@ public class TASDatabase {
             
             
             try{
-                query = "SELECT * FROM badge WHERE id = ? AND DATA(Timestamp) = ?"; 
+                query = "SELECT * FROM punch WHERE badgeid = ? AND DATE(originaltimestamp) = ?"; 
                 
                 pstSelect = conn.prepareStatement(query);
                 
@@ -259,10 +259,11 @@ public class TASDatabase {
                             int terminalid = resultset.getInt("terminalid");
                             int punchtypeid = resultset.getInt("punchtypeid");
                             
-                            obj = new Punch(punchtypeid, badge, terminalid);
+                            
+                            //obj = new Punch(terminalid, badgeid, punchtypeid);
                             
                             
-                            output.add(obj);
+                           // output.add(obj);
   
                         }
                     

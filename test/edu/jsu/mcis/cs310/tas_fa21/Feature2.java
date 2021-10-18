@@ -27,7 +27,7 @@ public class Feature2 {
 		
         /* Create New Punch Object */
 
-        Punch p1 = new Punch(101, db.getBadge("021890C0"), 1);
+        Punch p1 = new Punch(101, db.getBadge("021890C0"), 1); 
         
         /* Create Timestamp Objects */
         
