@@ -32,7 +32,7 @@ public class Punch {
 
       public Punch(Badge badgeid, int terminalid, PunchType punchtypeid) {
           
-        this.badgeid = badgeid.getId();//badgeid.getId(); 
+        this.badgeid = badgeid; //badgeid.getId(); 
         this.terminalid = terminalid;
         this.originaltimestamp = LocalDateTime.now();
         this.punchtypeid = punchtypeid;
@@ -40,11 +40,21 @@ public class Punch {
         this.adjustedtimestamp = LocalDateTime.now(); 
         this.adjustmenttype = null;
     }
+      public Punch(int terminalid, Badge badgeid, int punchtypeid) {
+          
+        this.badgeid = badgeid; //badgeid.getId(); 
+        this.terminalid = terminalid;
+        this.originaltimestamp = LocalDateTime.now();
+        this.punchtypeid = PunchType.values()[punchtypeid];
+        this.id = 0;
+        this.adjustedtimestamp = LocalDateTime.now(); 
+        this.adjustmenttype = null;
+    }
+     
 
 //Getters
 
-	public int getId()
-	{
+	public int getId(){
 		return id; 
 	}	
         
@@ -87,7 +97,7 @@ public class Punch {
             
             // #D2C39273 CLOCK IN: WED 09/05/2018 07:00:07
             
-            s.append(' ').append(badgeid).append(" ").append(punchtypeid);
+            s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
             s.append(": ").append((formatter.format(originaltimestamp)).toUpperCase());
             
             
