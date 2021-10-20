@@ -199,11 +199,7 @@ public class TASDatabase {
           int terminalid = p.getTerminalid(); 
           PunchType punchtypeid = p.getPunchtype(); 
           
-         
-         
-         //String originalTimeStamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
-         
-         
+
          try{
              query = "INSERT INTO tas_fa21_v1.punch (terminalid, badgeid, originaltimestamp, punchtypeid) VALUES (?, ?, ?, ?)"; 
              pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS); 
@@ -223,8 +219,7 @@ public class TASDatabase {
                      return resultset.getInt(1);
                  }
              }
-             
-             
+                
          }
          catch(SQLException e){ System.out.println(e);}
          return 0;    
@@ -237,15 +232,20 @@ public class TASDatabase {
             ArrayList<Punch> output = new ArrayList<>(); 
             String strbadge = badge.getId();
             
-            
-            
+           
+             
             try{
+                
                 query = "SELECT * FROM punch WHERE badgeid = ? AND DATE(originaltimestamp) = ?"; 
                 
                 pstSelect = conn.prepareStatement(query);
                 
                 pstSelect.setString(1, strbadge);
                 pstSelect.setDate(2, java.sql.Date.valueOf(date));
+                //pstSelect.setDate(2, date.);
+                System.out.println("HERE IS BADGE: " + strbadge);
+                System.out.println("HERE IS DATE: " + date);
+                
                 
                 hasresults = pstSelect.execute();
                 
@@ -260,10 +260,10 @@ public class TASDatabase {
                             int punchtypeid = resultset.getInt("punchtypeid");
                             
                             
-                            //obj = new Punch(terminalid, badgeid, punchtypeid);
+                            obj = new Punch(terminalid, badge, punchtypeid);
+                            //Problem is in here. 
                             
-                            
-                           // output.add(obj);
+                           output.add(obj);
   
                         }
                     
