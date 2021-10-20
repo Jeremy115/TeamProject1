@@ -25,7 +25,6 @@ public class TASDatabase {
         private String query;
         private PreparedStatement pstSelect = null, pstUpdate = null;
         
-        private ResultSet resultset = null;
         private boolean hasresults;
         private int updateCount; 
         
@@ -60,7 +59,6 @@ public class TASDatabase {
             }
             catch(SQLException e){}
             finally{
-                if (resultset != null) { try { resultset.close(); resultset = null; } catch (SQLException e) {} }
                 if (pstSelect != null) { try { pstSelect.close(); pstSelect = null; } catch (SQLException e) {} }
             }
 	}
@@ -69,7 +67,7 @@ public class TASDatabase {
         // becareful here. Code will not compile, but here is where getBadge and get Punch will go. 
         //The Test package should be able to pick these up as we set them as the test package calls them. 
         public Badge getBadge(String id){
-            Badge outputBadge ;
+            Badge outputBadge = null;
             
             try {
                 query = "SELECT * from badge where id = \"" + id + "\"";
@@ -79,21 +77,20 @@ public class TASDatabase {
                 
                 while (hasresults || pstSelect.getUpdateCount() != -1) {
                     if (hasresults) {
-                        resultset = pstSelect.getResultSet();
+                        ResultSet resultset = pstSelect.getResultSet();
                         
                         resultset.next();
                         outputBadge = new Badge(resultset.getString("id"), resultset.getString("description"));
                         
-                        return outputBadge;
                     }
                 }
             }
             catch(SQLException e){ System.out.println("Error in getBadge()"); }
-            return null;
+            return outputBadge;
         }
         
         public Punch getPunch(int id){
-          Punch outputPunch;
+          Punch outputPunch = null;
           
           try {
               query = "SELECT * FROM punch WHERE id = ?";
@@ -103,30 +100,26 @@ public class TASDatabase {
               
               hasresults = pstSelect.execute();
               
-              while (hasresults || pstSelect.getUpdateCount() != -1) {
-                  if (hasresults) {
-                      
-                      resultset = pstSelect.getResultSet();
-                      resultset.next();
-                      int terminalid = resultset.getInt("terminalid");
-                      String badgeid = resultset.getString("badgeid");
-                      LocalDateTime originaltimestamp = resultset.getTimestamp("originaltimestamp").toLocalDateTime(); 
-                      int punchtypeid = resultset.getInt("punchtypeid");
-                        
-                      outputPunch = new Punch(getBadge(badgeid), terminalid, PunchType.values()[punchtypeid]);
-                      outputPunch.setOriginalTimeStamp(originaltimestamp);
+                if (hasresults) {
 
-                      return outputPunch;
-                        
-                    }
-                }   
+                    ResultSet resultset = pstSelect.getResultSet();
+                    resultset.next();
+                    
+                    int terminalid = resultset.getInt("terminalid");
+                    String badgeid = resultset.getString("badgeid");
+                    LocalDateTime originaltimestamp = resultset.getTimestamp("originaltimestamp").toLocalDateTime(); 
+                    int punchtypeid = resultset.getInt("punchtypeid");
+
+                    outputPunch = new Punch(terminalid, getBadge(badgeid), punchtypeid, originaltimestamp);
+
+                  }
             }
-            catch(SQLException e){System.out.println(e);}
+            catch(SQLException e){ e.printStackTrace();}
             
-            return null;
+            return outputPunch;
 	}
         public Shift getShift(int id){ // method of the database class and provide the shift ID as a parameter.
-            Shift outputShift;
+            Shift outputShift = null;
             
             try{
                
@@ -140,7 +133,7 @@ public class TASDatabase {
                 while(hasresults || pstSelect.getUpdateCount() != -1 ){
                     if(hasresults){
                        
-                        resultset = pstSelect.getResultSet();
+                        ResultSet resultset = pstSelect.getResultSet();
                         resultset.next();
                        
                         String description = resultset.getString("description");
@@ -157,12 +150,11 @@ public class TASDatabase {
                        
                         outputShift = new Shift(id,description, start, stop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
                        System.out.println(outputShift);
-                        return outputShift; 
                     }
                 }
             }
             catch(SQLException e){System.out.println(e);}
-            return null;
+            return outputShift;
 	}
 	
 	public Shift getShift(Badge badge){
@@ -178,7 +170,7 @@ public class TASDatabase {
                 while(hasresults || pstSelect.getUpdateCount() != -1 ){
                     if(hasresults){
                        
-                        resultset = pstSelect.getResultSet();
+                        ResultSet resultset = pstSelect.getResultSet();
                         resultset.next();
                         
                         int shiftid = resultset.getInt("shiftid");
@@ -193,8 +185,13 @@ public class TASDatabase {
             return null;
 	}
         public int insertPunch(Punch p){
+            
+            int results = 0;
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
            
           LocalDateTime originalTime = p.getOriginaltimestamp();
+          String otsString = originalTime.format(dtf);
+          System.err.println("New Punch Timestamp (from insertPunch(): " + otsString);
           Badge badge = p.getBadge(); 
           int terminalid = p.getTerminalid(); 
           PunchType punchtypeid = p.getPunchtype(); 
@@ -206,23 +203,24 @@ public class TASDatabase {
              
              pstUpdate.setInt(1, terminalid);
              pstUpdate.setString(2, badge.getId());
-             pstUpdate.setTimestamp(3, Timestamp.valueOf(originalTime));
+             pstUpdate.setString(3, otsString);
              pstUpdate.setInt(4, punchtypeid.ordinal());
              
              updateCount = pstUpdate.executeUpdate();
              
              if(updateCount > 0){
                  
-                 resultset = pstUpdate.getGeneratedKeys(); 
+                 ResultSet resultset = pstUpdate.getGeneratedKeys(); 
                  
                  if (resultset.next()){
-                     return resultset.getInt(1);
+                     results = resultset.getInt(1);
                  }
              }
                 
          }
          catch(SQLException e){ System.out.println(e);}
-         return 0;    
+         System.err.println("New Punch ID: " + results);
+         return results;    
     }
         public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDate date){
             
@@ -232,8 +230,6 @@ public class TASDatabase {
             ArrayList<Punch> output = new ArrayList<>(); 
             String strbadge = badge.getId();
             
-           
-             
             try{
                 
                 query = "SELECT * FROM punch WHERE badgeid = ? AND DATE(originaltimestamp) = ?"; 
@@ -249,33 +245,23 @@ public class TASDatabase {
                 
                 hasresults = pstSelect.execute();
                 
-                 while(hasresults || pstSelect.getUpdateCount() != -1 ){
-                    if(hasresults){
-                        
-                        resultset = pstSelect.getResultSet();
-                        
-                        while(resultset.next()){
-                            
-                            int terminalid = resultset.getInt("terminalid");
-                            int punchtypeid = resultset.getInt("punchtypeid");
-                            
-                            
-                            obj = new Punch(terminalid, badge, punchtypeid);
-                            //Problem is in here. 
-                            
-                           output.add(obj);
-  
-                        }
-                    
+                if(hasresults){
+
+                    ResultSet resultset = pstSelect.getResultSet();
+
+                    while(resultset.next()){
+
+                        int punchid = resultset.getInt("id");
+
+
+                        obj = getPunch(punchid);
+                        //Problem is in here. 
+
+                       output.add(obj);
+
                     }
-                    else{
-                        updateCount = pstSelect.getUpdateCount();
-                       if(updateCount == -1){
-                           break;
-                        }
-                   }
-                 hasresults = pstSelect.getMoreResults(); 
-                 }   
+
+                }
              }
             catch(SQLException e){ System.out.println(e);/*printStackTrace();*/ }
             

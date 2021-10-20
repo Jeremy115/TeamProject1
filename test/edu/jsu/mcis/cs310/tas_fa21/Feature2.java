@@ -39,10 +39,13 @@ public class Feature2 {
         ots = p1.getOriginaltimestamp();
         int terminalid = p1.getTerminalid();
         PunchType punchtype = p1.getPunchtype();
-		
+        
+        System.err.println("New Punch Timestamp: " + ots.format(dtf));
+        	
         /* Insert Punch Into Database */
         
         int punchid = db.insertPunch(p1);
+        System.err.println("New Punch Timestamp: " + ots.format(dtf));
 		
         /* Retrieve New Punch */
         

@@ -30,16 +30,7 @@ public class Punch {
 
 //Constructor
 
-      public Punch(Badge badgeid, int terminalid, PunchType punchtypeid) {
-          
-        this.badgeid = badgeid; //badgeid.getId(); 
-        this.terminalid = terminalid;
-        this.originaltimestamp = LocalDateTime.now();
-        this.punchtypeid = punchtypeid;
-        this.id = 0;
-        this.adjustedtimestamp = LocalDateTime.now(); 
-        this.adjustmenttype = null;
-    }
+
       public Punch(int terminalid, Badge badgeid, int punchtypeid) {
           
         this.badgeid = badgeid; //badgeid.getId(); 
@@ -48,6 +39,17 @@ public class Punch {
         this.punchtypeid = PunchType.values()[punchtypeid];
         this.id = 0;
         this.adjustedtimestamp = LocalDateTime.now(); 
+        this.adjustmenttype = null;
+    }
+      
+    public Punch(int terminalid, Badge badgeid, int punchtypeid, LocalDateTime ts) {
+          
+        this.badgeid = badgeid; //badgeid.getId(); 
+        this.terminalid = terminalid;
+        this.originaltimestamp = ts;
+        this.punchtypeid = PunchType.values()[punchtypeid];
+        this.id = 0;
+        this.adjustedtimestamp = ts; 
         this.adjustmenttype = null;
     }
      
