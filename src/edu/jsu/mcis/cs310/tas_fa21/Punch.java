@@ -30,7 +30,6 @@ public class Punch {
 
 //Constructor
 
-
       public Punch(int terminalid, Badge badgeid, int punchtypeid) {
           
         this.badgeid = badgeid; //badgeid.getId(); 
