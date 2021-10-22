@@ -89,6 +89,22 @@ public class Punch {
                 this.adjustmenttype = adjustmenttype;
         }
         
+        public void adjust(Shift s){
+            
+            
+            //Make adjust here 
+            
+            
+        }
+        
+        public String printAdjusted(){
+            
+            
+            //String builder to format the adjusted type. 
+            
+            
+            return null;
+        }
 
 //	public String printOriginalTimestamp()
         public String printOriginal() {
