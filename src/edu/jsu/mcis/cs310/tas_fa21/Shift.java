@@ -20,6 +20,7 @@ public class Shift {
     private int interval; 
     private int dock; 
     private int gracePeriod; //the 5 minute grace period. 
+   
     
     private LocalTime start; // start the shift. 
     private LocalTime stop; // end the shift.
@@ -27,7 +28,8 @@ public class Shift {
     private LocalTime lunchstop; //Detects when lunch will stop (locally).
     private int lunchDeductTime; //Will deduct the time from employee.
     private long lunchduration; //Length of lunch duration.
-    private long shiftduration; //Length of the shift .
+    private long shiftduration; //Length of the shift.
+    
 
 //Constructor
 

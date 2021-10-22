@@ -90,18 +90,30 @@ public class Punch {
         }
         
         public void adjust(Shift s){
+               
+            
+            
+            
+            
+            
             
             
             //Make adjust here 
+            //assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 06:50:35", p1.printOriginal());
+            //assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 07:00:00 (Shift Start)", p1.printAdjusted());
+         
+          
+            
             
             
         }
         
         public String printAdjusted(){
             
-            
             //String builder to format the adjusted type. 
             
+            
+           
             
             return null;
         }
