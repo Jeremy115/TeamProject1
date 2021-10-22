@@ -90,7 +90,11 @@ public class Punch {
         }
         
         public void adjust(Shift s){
-            
+            /*  Know what type punch…clock in/out, lunch start/stop
+                Compare time of punch to time from shift
+                Check grace period to be sure time doesn’t need to be docked/reduced
+                Adjust/update time of punch to match time from shift if not impacted by grace period */
+
             
             //Make adjust here 
             
