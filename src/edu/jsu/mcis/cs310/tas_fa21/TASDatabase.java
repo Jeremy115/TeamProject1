@@ -186,8 +186,9 @@ public class TASDatabase {
 	}
         public int insertPunch(Punch p){
             
-            int results = 0;
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            
+          int results = 0;
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
            
           LocalDateTime originalTime = p.getOriginaltimestamp();
           String otsString = originalTime.format(dtf);
