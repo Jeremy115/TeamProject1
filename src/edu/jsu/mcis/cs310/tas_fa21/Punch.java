@@ -97,8 +97,17 @@ public class Punch {
                 Check grace period to be sure time doesn’t need to be docked/reduced
                 Adjust/update time of punch to match time from shift if not impacted by grace period */
             
-
+            //Range check 
+            
+            //Look at value at where it ends and start. 
+            
+            //If statements with conditions for adjustedtype and adjustedtimestamp.
+            //Based on originaltimestamp. Here we get that time stamp and round it. 
+            
+            
+            
            
+            
             //Make adjust here 
             //assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 06:50:35", p1.printOriginal());
             //assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 07:00:00 (Shift Start)", p1.printAdjusted());
@@ -109,11 +118,18 @@ public class Punch {
         public String printAdjusted(){
             
             //String builder to format the adjusted type. 
+            StringBuilder s = new StringBuilder();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
             
+
+               
+            s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
+            s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
+            s.append(" (").append(adjustmenttype).append(")");
             
            
             
-            return null;
+            return s.toString();
         }
 
 //	public String printOriginalTimestamp()
@@ -127,7 +143,7 @@ public class Punch {
             s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
             s.append(": ").append((formatter.format(originaltimestamp)).toUpperCase());
             
-            
+            System.out.println(s.toString());
             // Date date = new Date(originaltimestamp);
 
             //Found easier code online to make string building easier. 
@@ -136,7 +152,8 @@ public class Punch {
             
             //String strDate = formatter.format(date);
 
-
+            //originaltimestamp is the time to adjust. 
+            //
 
             //output.append(strDate.toUpperCase());
 
