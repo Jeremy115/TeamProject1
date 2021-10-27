@@ -112,7 +112,7 @@ public class Punch {
            
             
             SimpleDateFormat format = new SimpleDateFormat("EEE");
-            String strDate = format.format(originaltimestamp.toLocalDate()).toUpperCase(); 
+            String strDate = format.format(originaltimestamp.toLocalTime()).toUpperCase(); 
 
            
            
@@ -125,15 +125,14 @@ public class Punch {
             }
             //lunch Start
             else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStart()) || originaltimestamp.toLocalTime().isBefore(s.getLunchStart())){
-               // adjustmenttype = null;
-                //adjustedtimestamp = null; 
+                adjustmenttype = "Lunch Start";  
+                adjustedtimestamp = null; 
             }
             //lunch Stop
             else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStop()) || originaltimestamp.toLocalTime().isBefore(s.getLunchStop())){
-              //  adjustmenttype = null;
-                //adjustedtimestamp = null;
+                adjustmenttype = "Lunch Stop";
+                adjustedtimestamp = null;
             }
-            
             
             
            
@@ -156,6 +155,7 @@ public class Punch {
             s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
             s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
             s.append(" (").append(adjustmenttype).append(")");
+            System.out.println(s);
             
            
             
