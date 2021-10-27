@@ -7,7 +7,11 @@ package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
@@ -103,6 +107,32 @@ public class Punch {
             
             //If statements with conditions for adjustedtype and adjustedtimestamp.
             //Based on originaltimestamp. Here we get that time stamp and round it. 
+            //LATE CLOCK-OUT: SHIFT STOP within 15-min interval (ADJUST LATE CLOCK-OUT
+            //BACKWARD TO THE SCHEDULED END OF THE SHIFT)
+           
+            
+            SimpleDateFormat format = new SimpleDateFormat("EEE");
+            String strDate = format.format(originaltimestamp.toLocalDate()).toUpperCase(); 
+
+           
+           
+            
+            //Weekdays
+            if ( !"SAT".equals(strDate) && !"SUN".equals(strDate)){
+             
+                
+                
+            }
+            //lunch Start
+            else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStart()) || originaltimestamp.toLocalTime().isBefore(s.getLunchStart())){
+               // adjustmenttype = null;
+                //adjustedtimestamp = null; 
+            }
+            //lunch Stop
+            else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStop()) || originaltimestamp.toLocalTime().isBefore(s.getLunchStop())){
+              //  adjustmenttype = null;
+                //adjustedtimestamp = null;
+            }
             
             
             
