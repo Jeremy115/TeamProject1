@@ -111,14 +111,14 @@ public class Punch {
             //BACKWARD TO THE SCHEDULED END OF THE SHIFT)
            
             
-            SimpleDateFormat format = new SimpleDateFormat("EEE");
-            String strDate = format.format(originaltimestamp.toLocalTime()).toUpperCase(); 
-
            
+           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE");
+
+           String strDay = formatter.format(adjustedtimestamp).toUpperCase();
            
             
             //Weekdays
-            if ( !"SAT".equals(strDate) && !"SUN".equals(strDate)){
+            if ( !"SAT".equals(strDay) && !"SUN".equals(strDay)){
              
                 
                 
