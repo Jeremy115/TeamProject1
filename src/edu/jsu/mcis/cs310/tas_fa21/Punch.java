@@ -10,8 +10,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
@@ -111,28 +110,142 @@ public class Punch {
             //BACKWARD TO THE SCHEDULED END OF THE SHIFT)
            
             
-           
+           //Formats adjustedtimestamps day. 
            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE");
-
            String strDay = formatter.format(adjustedtimestamp).toUpperCase();
            
             
+            
+            //************************PUNCH OUT**************************
             //Weekdays
             if ( !"SAT".equals(strDay) && !"SUN".equals(strDay)){
              
-                
-                
+                //Late Clock out
+                if(originaltimestamp.toLocalTime().isAfter(s.getStop()) && (Math.abs(s.getStop().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay()) <= s.getInterval() * 60)){
+
+                    adjustedtimestamp = originaltimestamp - 1000 Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getLunchStart().toSecondOfDay());
+                    adjustmenttype = "Shift Start";
+                }
+                //Late Lunch Start.
+                else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStart()) && originaltimestamp.toLocalTime().isBefore(s.getLunchStop())){
+                    adjustmenttype = "Lunch Start";  
+                    adjustedtimestamp = originaltimestamp - 1000 * Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getLunchStart().toSecondOfDay()); 
+                }
+                //Early Clock Out.
+                else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStop()) && originaltimestamp.toLocalTime().isBefore(s.getStop()) && (Math.abs(s.getStop().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay())) <= s.getGracePeriod() * 60){
+                    adjustmenttype = "Shift Stop";
+                    adjustedtimestamp = originaltimestamp + 1000 Math.abs(s.getStop().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay());
+                }
+                //Dock 15 minutes. 
+                else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStop()) && originaltimestamp.toLocalTime().isBefore(s.getStop()) && (Math.abs(s.getStop().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay())) > s.getGracePeriod() * 60 && (Math.abs(s.getStop().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay()) <= s.getDock() * 60)){
+
+                    adjustmenttype = "Shift Dock"; 
+                    adjustedtimestamp = (originaltimestamp + (Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getStop().toSecondOfDay())) * 1000) - (s.getDock() * 60 * 1000); 
+                }
+                //Correct time(none).
+                else if((originaltimestamp.toLocalTime().getMinute() % s.getInterval()) == 0){
+                    adjustmenttype = "None"; 
+                    adjustedtimestamp = originaltimestamp - (originaltimestamp.getSecond() * 1000);
+                }
+                else{
+
+                    //Default when clock out. 
+                    //Interval Round
+                    long round = originaltimestamp.toLocalTime().getMinute() % s.getInterval()/2; 
+                    int half = s.getInterval()/2; 
+                    if(round != 0){
+                            if(round < half){ //round down. 
+                                adjustedtimestamp = originaltimestamp - (round * 60 * 1000);
+                            }
+                            else if(round >= half){ //round up.
+                                adjustedtimestamp = originaltimestamp + ((s.getInterval() - round)* 60 * 1000);
+                            }
+                        adjustedtimestamp = adjustedtimestamp - (originaltimestamp.toLocalTime().getSecond() * 1000);
+                        adjustmenttype = "Interval Round"; 
+                    }
+
+                }
             }
-            //lunch Start
-            else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStart()) || originaltimestamp.toLocalTime().isBefore(s.getLunchStart())){
-                adjustmenttype = "Lunch Start";  
-                adjustedtimestamp = null; 
+            //Weekends
+            else if ( "SAT".equals(strDay) || "SUN".equals(strDay)){
+                
+                //Interval Round. 
+                long round = originaltimestamp.toLocalTime().getMinute() % s.getInterval()/2; 
+                int half = s.getInterval()/2; 
+                if(round != 0){
+                        if(round < half){ //round down. 
+                            adjustedtimestamp = originaltimestamp - (round * 60 * 1000);
+                        }
+                        else if(round >= half){ //round up.
+                            adjustedtimestamp = originaltimestamp + ((s.getInterval() - round)* 60 * 1000);
+                        }
+                    adjustedtimestamp = adjustedtimestamp - (originaltimestamp.toLocalTime().getSecond() * 1000);
+                    adjustmenttype = "Interval Round"; 
+                }
             }
-            //lunch Stop
-            else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStop()) || originaltimestamp.toLocalTime().isBefore(s.getLunchStop())){
+           
+            
+            //**********************PUNCHING IN************************
+            if(!"SAT".equals(strDay) && !"SUN".equals(strDay)){
+                
+                //Early Clock In. 
+                if (originaltimestamp.toLocalTime().isBefore(s.getStart()) && (Math.abs(s.getStart().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay()) <= s.getInterval() * 60)){
+                    adjustedtimestamp = originaltimestamp + 1000 * Math.abs(s.getStart().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay());
+                    adjustmenttype = "Shift Start";
+                }
+                //Lunch Stop.
+                else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStart()) && originaltimestamp.toLocalTime().isBefore(s.getLunchStop())){
+                adjustedtimestamp = originaltimestamp + 1000 * Math.abs(s.getLunchStop().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay());
                 adjustmenttype = "Lunch Stop";
-                adjustedtimestamp = null;
+                }
+                //Late Clock in and Grace period.  
+                else if(originaltimestamp.toLocalTime().isAfter(s.getStart()) && originaltimestamp.toLocalTime().isBefore(s.getLunchStart()) && Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getStart().toSecondOfDay()) <= s.getGracePeriod() * 60){
+                    
+                 adjustedtimestamp = originaltimestamp - 1000 * Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getStart().toSecondOfDay());
+                 adjustmenttype = "Shift Start"; 
+                }
+                //Dock 15 min
+                else if(originaltimestamp.toLocalTime().isAfter(s.getStart()) && originaltimestamp.toLocalTime().isBefore(s.getLunchStart()) && (Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getStart().toSecondOfDay())) > s.getGracePeriod() * 60 && (Math.abs(s.getStart().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay()) <= s.getDock() * 60)) {
+                    adjustedtimestamp = (originaltimestamp -(Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getStart().toSecondOfDay())) * 1000) + (s.getDock() * 60 * 1000);
+                    adjustmenttype = "Shift Dock"; 
+                }
+                //None
+                else if((originaltimestamp.toLocalTime().getMinute() % s.getInterval()) ==0){ 
+                    adjustedtimestamp = originaltimestamp - (originaltimestamp.toLocalTime().getSecond() * 1000);
+                    adjustmenttype = "None";
+                }
+                else{
+                    //Interval Round
+                    
+                    long round = originaltimestamp.toLocalTime().getMinute() % s.getInterval()/2; 
+                    int half = s.getInterval()/2; 
+                    if(round != 0){
+                        if(round < half){ //round down. 
+                            adjustedtimestamp = originaltimestamp - (round * 60 * 1000);
+                        }
+                        else if(round >= half){ //round up.
+                            adjustedtimestamp = originaltimestamp + ((s.getInterval() - round)* 60 * 1000);
+                        }
+                    adjustedtimestamp = adjustedtimestamp - (originaltimestamp.toLocalTime().getSecond() * 1000);
+                    adjustmenttype = "Interval Round"; 
+                    }
+                }
             }
+            else if("SAT".equals(strDay) || "SUN".equals(strDay)){
+                long round = originaltimestamp.toLocalTime().getMinute() % s.getInterval()/2; 
+                    int half = s.getInterval()/2; 
+                    if(round != 0){
+                        if(round < half){ //round down. 
+                            adjustedtimestamp = originaltimestamp - (round * 60 * 1000);
+                        }
+                        else if(round >= half){ //round up.
+                            adjustedtimestamp = originaltimestamp + ((s.getInterval() - round)* 60 * 1000);
+                        }
+                    adjustedtimestamp = adjustedtimestamp - (originaltimestamp.toLocalTime().getSecond() * 1000);
+                    adjustmenttype = "Interval Round"; 
+                    }
+            }
+                
             
             
            
@@ -150,7 +263,7 @@ public class Punch {
             StringBuilder s = new StringBuilder();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
             
-
+                
                
             s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
             s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
