@@ -113,40 +113,34 @@ public class Punch {
             //Based on originaltimestamp. Here we get that time stamp and round it. 
             //LATE CLOCK-OUT: SHIFT STOP within 15-min interval (ADJUST LATE CLOCK-OUT
             //BACKWARD TO THE SCHEDULED END OF THE SHIFT)
-           
-            
-           //Formats adjustedtimestamps day. 
-           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE");
-           String strDay = formatter.format(adjustedtimestamp).toUpperCase();
+
            
            
+           //LocalDateTime variables to compair when employee punches in or out of clock
            
            LocalDateTime shiftstart = s.getStart().atDate(originaltimestamp.toLocalDate());//Shift start
            shiftstart = shiftstart.withSecond(0).withNano(0);
+           
            LocalDateTime shiftstartint = shiftstart.minusMinutes(s.getInterval());//Subtracts interval minutes from shiftstart and creates a new local date time object.
            
            LocalDateTime shiftstop = s.getStop().atDate(originaltimestamp.toLocalDate()); //Shift stop
            shiftstop = shiftstop.withSecond(0).withNano(0);
+           
            LocalDateTime shiftstopint = shiftstop.plusMinutes(s.getInterval());// Adds interval minutes to shiftstart
-                   
+                  
            
            LocalDateTime lunchstart = s.getLunchStart().atDate(originaltimestamp.toLocalDate()); //Lunch start
-           
-           
            LocalDateTime lunchstop = s.getLunchStop().atDate(originaltimestamp.toLocalDate()); //Lunch stop
            
            
            LocalDateTime gracestart = shiftstart.plusMinutes(s.getGracePeriod()); // Grace period.
+           LocalDateTime gracestop = shiftstart.minusMinutes(s.getGracePeriod());//Grace period stop
                    
-           //grace stop
+           LocalDateTime dockstartshift = shiftstart.minusMinutes(s.getDock());//Docks time shift start
+           LocalDateTime dockshiftstop = shiftstop.plusMinutes(s.getDock()); //Docks time shiftstop
            
                    
-           
-           
-           
-           
-           
-           
+ 
            int dayofweek = originaltimestamp.get(usweekday);
            //Punchtypes
            if(punchtypeid == PunchType.CLOCK_IN){
@@ -156,17 +150,37 @@ public class Punch {
                    //conditioned if statements.
                    
                    //Early Shift start 
+                   if(originaltimestamp.isBefore(shiftstart)){
+                       adjustmenttype = "Shift Start";
+                       adjustedtimestamp = null; 
+                       //Interval for shift start.
+                   }
                    
                    //Late Shift start within Grace period
-                   
+                   if(originaltimestamp.isAfter(shiftstart) && originaltimestamp.isBefore(gracestart)){
+                       adjustmenttype = "Shift Start";
+                       adjustedtimestamp = null; 
+                   }
+                    
                    //Late shift start outside grace period
-                   
+                   if(originaltimestamp.isAfter(shiftstart) && originaltimestamp.isAfter(gracestart)){
+                       adjustmenttype = "Shift Start";
+                       adjustedtimestamp = null;
+                       //we will dock the time above this comment.
+                   }
                    //Early Lunch return.
-                   
+                   if(originaltimestamp.isBefore(lunchstop)){
+                       adjustmenttype = "Lunch Stop"; 
+                       adjustedtimestamp = null; 
+                       //round to lunch stop
+                   }
                    
                    
                } 
                else{
+                  //interval rule. 
+                   
+                   //If punch occurs zones on weekend round up or down to nearest increment.  
                        
                }
                
@@ -179,13 +193,25 @@ public class Punch {
                    //conditioned if statements. 
                
                    //Late lunch departure
-                   
+                   if(originaltimestamp.isAfter(lunchstart)){
+                       adjustmenttype = "Lunch Start";
+                       adjustedtimestamp = null;    
+                   }
                    //Early departure outside grace period.
-                   
+                   if(originaltimestamp.isBefore(shiftstop) && originaltimestamp.isBefore(gracestop)){
+                       adjustmenttype = "Shift Stop";
+                       adjustedtimestamp = null; 
+                   }
                    //early departure within grace period. 
-                   
+                   if(originaltimestamp.isBefore(shiftstop) && originaltimestamp.isAfter(gracestop)){
+                       adjustmenttype = "Shift Stop"; 
+                       adjustedtimestamp = null; 
+                   }
                    //Late departure. 
-               }
+                   if(originaltimestamp.isAfter(shiftstop) && originaltimestamp.isAfter(shiftstopint)){
+                       adjustmenttype = "Shift Stop"; 
+                       adjustedtimestamp = null;         
+                   }
                else{
                    //interval rule. 
                    
@@ -196,11 +222,7 @@ public class Punch {
                    
            }
            
-               
-               
-               
-               
-               
+           
 
             
             //************************PUNCH OUT**************************
