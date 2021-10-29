@@ -118,13 +118,17 @@ public class Punch {
             
             //************************PUNCH OUT**************************
             //Weekdays
-            if ( !"SAT".equals(strDay) && !"SUN".equals(strDay)){
+            if ( !"SAT".equals(strDay) || !"SUN".equals(strDay)){
              
                 //Late Clock out
                 if(originaltimestamp.toLocalTime().isAfter(s.getStop()) && (Math.abs(s.getStop().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay()) <= s.getInterval() * 60)){
 
-                    adjustedtimestamp = originaltimestamp - 1000 Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getLunchStart().toSecondOfDay());
-                    adjustmenttype = "Shift Start";
+                    
+  //VARIABLES       LocalDateTime       LocalDateTime   CONV LOCALTIME  CONV TO INT                    LocalDateTime   CONV TO LOCALDATE. CONV TO INT HERE.     LOCALTIME      CONVERTS TO INT HERE      
+                    adjustedtimestamp = (originaltimestamp.toLocalTime().toSecondOfDay() - 1000 Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getLunchStart().toSecondOfDay()));
+                                                                                       //Math.abs for absolute value of int type.
+                    
+                    adjustmenttype = "Shift Start";        
                 }
                 //Late Lunch Start.
                 else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStart()) && originaltimestamp.toLocalTime().isBefore(s.getLunchStop())){
