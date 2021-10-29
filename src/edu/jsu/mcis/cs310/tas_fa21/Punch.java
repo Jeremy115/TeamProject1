@@ -8,10 +8,13 @@ package edu.jsu.mcis.cs310.tas_fa21;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -93,6 +96,8 @@ public class Punch {
         }
         
         public void adjust(Shift s){
+            
+            TemporalField usweekday = WeekFields.of(Locale.US).dayOfWeek();
 
                
              /*  Know what type punch…clock in/out, lunch start/stop
@@ -114,7 +119,89 @@ public class Punch {
            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE");
            String strDay = formatter.format(adjustedtimestamp).toUpperCase();
            
-            
+           
+           
+           LocalDateTime shiftstart = s.getStart().atDate(originaltimestamp.toLocalDate());//Shift start
+           shiftstart = shiftstart.withSecond(0).withNano(0);
+           LocalDateTime shiftstartint = shiftstart.minusMinutes(s.getInterval());//Subtracts interval minutes from shiftstart and creates a new local date time object.
+           
+           LocalDateTime shiftstop = s.getStop().atDate(originaltimestamp.toLocalDate()); //Shift stop
+           shiftstop = shiftstop.withSecond(0).withNano(0);
+           LocalDateTime shiftstopint = shiftstop.plusMinutes(s.getInterval());// Adds interval minutes to shiftstart
+                   
+           
+           LocalDateTime lunchstart = s.getLunchStart().atDate(originaltimestamp.toLocalDate()); //Lunch start
+           
+           
+           LocalDateTime lunchstop = s.getLunchStop().atDate(originaltimestamp.toLocalDate()); //Lunch stop
+           
+           
+           LocalDateTime gracestart = shiftstart.plusMinutes(s.getGracePeriod()); // Grace period.
+                   
+           //grace stop
+           
+                   
+           
+           
+           
+           
+           
+           
+           int dayofweek = originaltimestamp.get(usweekday);
+           //Punchtypes
+           if(punchtypeid == PunchType.CLOCK_IN){
+               
+               //weekdays 
+               if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
+                   //conditioned if statements.
+                   
+                   //Early Shift start 
+                   
+                   //Late Shift start within Grace period
+                   
+                   //Late shift start outside grace period
+                   
+                   //Early Lunch return.
+                   
+                   
+                   
+               } 
+               else{
+                       
+               }
+               
+               
+           }
+           else if (punchtypeid == PunchType.CLOCK_OUT){
+               
+               //weekdays
+               if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
+                   //conditioned if statements. 
+               
+                   //Late lunch departure
+                   
+                   //Early departure outside grace period.
+                   
+                   //early departure within grace period. 
+                   
+                   //Late departure. 
+               }
+               else{
+                   //interval rule. 
+                   
+                   //If punch occurs zones on weekend round up or down to nearest increment. 
+                   
+               }
+               
+                   
+           }
+           
+               
+               
+               
+               
+               
+
             
             //************************PUNCH OUT**************************
             //Weekdays
@@ -124,14 +211,17 @@ public class Punch {
                 if(originaltimestamp.toLocalTime().isAfter(s.getStop()) && (Math.abs(s.getStop().toSecondOfDay() - originaltimestamp.toLocalTime().toSecondOfDay()) <= s.getInterval() * 60)){
 
                     
-  //VARIABLES       LocalDateTime       LocalDateTime   CONV LOCALTIME  CONV TO INT                    LocalDateTime   CONV TO LOCALDATE. CONV TO INT HERE.     LOCALTIME      CONVERTS TO INT HERE      
-                    adjustedtimestamp = (originaltimestamp.toLocalTime().toSecondOfDay() - 1000 Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getLunchStart().toSecondOfDay()));
+  //VARIABLES       LocalDateTime       LocalDateTime   CONV LOCALTIME  CONV TO INT                        LocalDateTime   CONV TO LOCALDATE. CONV TO INT HERE.     LOCALTIME      CONVERTS TO INT HERE      
+                    adjustedtimestamp = (originaltimestamp.toLocalTime().toSecondOfDay() - 1000 * Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getLunchStart().atDate(originaltimestamp).toSecondOfDay()));
+                   
                                                                                        //Math.abs for absolute value of int type.
-                    
+                    adjustedtimestamp = originaltimestamp  ;
+                    LocalDateTime lunchtest = s.getLunchStart().atDate(originaltimestamp.toLocalDate());
+                    if(originaltimestamp.isBefore(lunchtest))
                     adjustmenttype = "Shift Start";        
                 }
                 //Late Lunch Start.
-                else if(originaltimestamp.toLocalTime().isAfter(s.getLunchStart()) && originaltimestamp.toLocalTime().isBefore(s.getLunchStop())){
+                else if(originaltimestamp.isAfter(s.getLunchStart().atDate(originaltimestamp.toLocalDate())) && originaltimestamp.isBefore(s.getLunchStop().atDate(originaltimestamp.toLocalDate()))){
                     adjustmenttype = "Lunch Start";  
                     adjustedtimestamp = originaltimestamp - 1000 * Math.abs(originaltimestamp.toLocalTime().toSecondOfDay() - s.getLunchStart().toSecondOfDay()); 
                 }
