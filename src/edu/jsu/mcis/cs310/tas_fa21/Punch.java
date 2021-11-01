@@ -150,28 +150,30 @@ public class Punch {
                    //conditioned if statements.
                    
                    //Early Shift start 
-                   if(originaltimestamp.isBefore(shiftstart)){
+                   if(originaltimestamp.isBefore(shiftstart) || originaltimestamp.isEqual(shiftstart)) { // equal????
                        adjustmenttype = "Shift Start";
-                       adjustedtimestamp = null; 
+                       adjustedtimestamp = shiftstart; 
                        //Interval for shift start.
                    }
                    
                    //Late Shift start within Grace period
-                   if(originaltimestamp.isAfter(shiftstart) && originaltimestamp.isBefore(gracestart)){
+                   else if (originaltimestamp.isAfter(shiftstart) && (originaltimestamp.isBefore(gracestart) || originaltimestamp.isEqual(gracestart))) { 
                        adjustmenttype = "Shift Start";
-                       adjustedtimestamp = null; 
+                       adjustedtimestamp = gracestart; 
+
                    }
                     
                    //Late shift start outside grace period
-                   if(originaltimestamp.isAfter(shiftstart) && originaltimestamp.isAfter(gracestart)){
+                   else if (originaltimestamp.isAfter(shiftstart) && originaltimestamp.isAfter(gracestart) && originaltimestamp.isBefore(lunchstart)){
                        adjustmenttype = "Shift Start";
-                       adjustedtimestamp = null;
+                       //loop interval to determine adjusted time
+                       adjustedtimestamp = shiftstartint;
                        //we will dock the time above this comment.
                    }
                    //Early Lunch return.
-                   if(originaltimestamp.isBefore(lunchstop)){
+                   else if(originaltimestamp.isBefore(lunchstop)){
                        adjustmenttype = "Lunch Stop"; 
-                       adjustedtimestamp = null; 
+                       adjustedtimestamp = lunchstop; 
                        //round to lunch stop
                    }
                    
@@ -193,24 +195,25 @@ public class Punch {
                    //conditioned if statements. 
                
                    //Late lunch departure
-                   if(originaltimestamp.isAfter(lunchstart)){
+                   if(originaltimestamp.isAfter(lunchstart) && (originaltimestamp.isBefore(lunchstop) || originaltimestamp.isEqual(lunchstop))){
                        adjustmenttype = "Lunch Start";
-                       adjustedtimestamp = null;    
+                       adjustedtimestamp = lunchstart;    
                    }
                    //Early departure outside grace period.
-                   if(originaltimestamp.isBefore(shiftstop) && originaltimestamp.isBefore(gracestop)){
+                   else if(originaltimestamp.isBefore(shiftstop) && originaltimestamp.isBefore(gracestop)){
                        adjustmenttype = "Shift Stop";
-                       adjustedtimestamp = null; 
+                       // loop interval
+                       adjustedtimestamp = shiftstopint; 
                    }
                    //early departure within grace period. 
-                   if(originaltimestamp.isBefore(shiftstop) && originaltimestamp.isAfter(gracestop)){
+                   else if(originaltimestamp.isBefore(shiftstop) && originaltimestamp.isAfter(gracestop)){
                        adjustmenttype = "Shift Stop"; 
-                       adjustedtimestamp = null; 
+                       adjustedtimestamp = shiftstop; 
                    }
                    //Late departure. 
-                   if(originaltimestamp.isAfter(shiftstop) && originaltimestamp.isAfter(shiftstopint)){
+                   else if(originaltimestamp.isAfter(shiftstop)) {
                        adjustmenttype = "Shift Stop"; 
-                       adjustedtimestamp = null;         
+                       adjustedtimestamp = shiftstop;         
                    }
                else{
                    //interval rule. 
