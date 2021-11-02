@@ -33,6 +33,7 @@ public class Punch {
         private PunchType punchtypeid;  
         private String adjustmenttype;
         private LocalDateTime adjustedtimestamp;
+        private LocalDateTime ots;
 
 //Constructor
 
@@ -117,7 +118,7 @@ public class Punch {
            
            
            //LocalDateTime variables to compare when employee punches in or out of clock
-           
+         
            LocalDateTime shiftstart = s.getStart().atDate(originaltimestamp.toLocalDate());//Shift start
            shiftstart = shiftstart.withSecond(0).withNano(0);
        
@@ -141,111 +142,116 @@ public class Punch {
                    
            //LocalDateTime shiftstopdockplus = shiftstop.plusMinutes(s.getDock()); //Anything greater than shift stop plus falls in the interval round
            LocalDateTime shiftstopdockminus = shiftstop.minusMinutes(s.getDock()); //Shift stop dock time
- 
+           
            int dayofweek = originaltimestamp.get(usweekday);
            //Punchtypes
            if(punchtypeid == PunchType.CLOCK_IN){
                
                //weekdays 
                if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
-                   //conditioned if statements.
+                    //conditioned if statements.
                    
-    // added NONE for CLOCK_IN
-    // How do we 
-                   if (originaltimestamp.withSecond(0).withNano(0).isEqual(shiftstart)){
-                   //if (originaltimestamp.isEqual(shiftstart)) {
+                    if (originaltimestamp.withSecond(0).withNano(0).equals(shiftstart)) {
                        adjustmenttype = "None";
-                       adjustedtimestamp = shiftstart; 
-                   }
-                   else if (originaltimestamp.isEqual(lunchstop)) {
+                       adjustedtimestamp = shiftstart;
+                    }  
+                   
+                    else if (originaltimestamp.withSecond(0).withNano(0).isEqual(lunchstop)) {
                        adjustmenttype = "None";
-                       adjustedtimestamp = lunchstop; 
-                       
-                   }
-                   //Early Shift start 
-                   else if((originaltimestamp.isAfter(shiftstartminus) && originaltimestamp.isEqual(shiftstartminus)) || originaltimestamp.isBefore(shiftstart)) { // equal????
+                       adjustedtimestamp = lunchstop;
+                    }
+                   
+                    //Early Shift start 
+                    else if((originaltimestamp.isAfter(shiftstartminus) && originaltimestamp.isEqual(shiftstartminus)) || originaltimestamp.isBefore(shiftstart)) { // equal????
                        adjustmenttype = "Shift Start";
                        adjustedtimestamp = shiftstart; 
-                       //Interval for shift start.
-                   }
+                    }
                    
-                   //Late Shift start within Grace period
-                   else if ((originaltimestamp.isAfter(shiftstart) && originaltimestamp.isEqual(shiftstart)) || originaltimestamp.isBefore(shiftstartgrace)) { 
+                    //Late Shift start within Grace period
+                    else if ((originaltimestamp.isAfter(shiftstart) && originaltimestamp.isEqual(shiftstart)) || originaltimestamp.isBefore(shiftstartgrace)) { 
                        adjustmenttype = "Shift Start";
                        adjustedtimestamp = shiftstart; 
 
-                   }
+                    }
                     
-                   //Late shift start outside grace period
-                   else if ((originaltimestamp.isAfter(shiftstartgrace) && originaltimestamp.isEqual(shiftstartgrace)) || originaltimestamp.isBefore(shiftstartplus)) {
+                    //Late shift start outside grace period
+                    else if ((originaltimestamp.isAfter(shiftstartgrace) && originaltimestamp.isEqual(shiftstartgrace)) || originaltimestamp.isBefore(shiftstartplus)) {
                        adjustmenttype = "Shift Dock";
                        adjustedtimestamp = shiftstartdockplus;
 
-                   }
-                   //Early Lunch return.
-                   else if ((originaltimestamp.isAfter(lunchstart) && originaltimestamp.isEqual(lunchstart)) || originaltimestamp.isBefore(lunchstop)) {
+                    }
+                    
+                    //Early Lunch return.
+                    else if ((originaltimestamp.isAfter(lunchstart) && originaltimestamp.isEqual(lunchstart)) || originaltimestamp.isBefore(lunchstop)) {
                        adjustmenttype = "Lunch Stop"; 
                        adjustedtimestamp = lunchstop; 
                        //round to lunch stop
-                   }
+                    }
                    
+
                    
-               } 
-               else{
-                  //interval rule. 
+                } 
+                else{
+                    if (originaltimestamp.isBefore(shiftstartminus) || (originaltimestamp.isAfter(shiftstartplus) && originaltimestamp.isBefore(lunchstart)) ||
+                       (originaltimestamp.isAfter(lunchstop) && originaltimestamp.isBefore(shiftstopminus))) {
+                       adjustmenttype = "Interval Round"; 
+                       adjustedtimestamp = lunchstop; 
+                    } 
                    
                    //If punch occurs zones on weekend round up or down to nearest increment.  
                        
-               }
+                }
+            }
+           
+            else if (punchtypeid == PunchType.CLOCK_OUT){
                
-               
-           }
-           else if (punchtypeid == PunchType.CLOCK_OUT){
-               
-               //weekdays
-               if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
-                   //conditioned if statements. 
+                //weekdays
+                if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
+                    //conditioned if statements. 
                    
-    // added NONE for CLOCK_OUT
-    // Not hitting this none...I think it is not formatted correctly
-    
-                   if (originaltimestamp.withSecond(0).withNano(0).isEqual(shiftstop)){
+                    //System.out.println("OTS clock_out " + originaltimestamp.withSecond(0).withNano(0));
+                    //System.out.println("clock_out shift stop " + shiftstop);
+                   
+                    if (originaltimestamp.withSecond(0).withNano(0).equals(shiftstop)) {
                        adjustmenttype = "None";
                        adjustedtimestamp = shiftstop;
-                   }   
-                   else if (originaltimestamp.isEqual(lunchstart)) {
+                    } 
+                   
+                    else if (originaltimestamp.withSecond(0).withNano(0).isEqual(lunchstart)) {
                        adjustmenttype = "None";
                        adjustedtimestamp = lunchstart;
-                   }
-                   //Early departure outside grace period.
-                   else if(originaltimestamp.isAfter(shiftstopminus) || (originaltimestamp.isBefore(shiftstopgrace) && originaltimestamp.isEqual(shiftstopgrace))){
+                    }
+                    
+                    //Early departure outside grace period.
+                    else if(originaltimestamp.isAfter(shiftstopminus) && (originaltimestamp.isBefore(shiftstopgrace) || originaltimestamp.isEqual(shiftstopgrace))){
                        adjustmenttype = "Shift Dock";
                        adjustedtimestamp = shiftstopdockminus; 
-                   }
-                   //early departure within grace period. 
-                   else if(originaltimestamp.isAfter(shiftstopgrace) || (originaltimestamp.isBefore(shiftstop) && originaltimestamp.isEqual(shiftstop))){
+                    }
+                    
+                    //early departure within grace period. 
+                    else if(originaltimestamp.isAfter(shiftstopgrace) && (originaltimestamp.isBefore(shiftstop) || originaltimestamp.isEqual(shiftstop))){
                        adjustmenttype = "Shift Stop"; 
                        adjustedtimestamp = shiftstop; 
-                   }
-                   //Late departure. 
-                   else if ((originaltimestamp.isAfter(shiftstop) && originaltimestamp.isBefore(shiftstopplus)) || originaltimestamp.isEqual(shiftstopplus)) {
+                    }
+                    
+                    //Late departure. 
+                    else if ((originaltimestamp.isAfter(shiftstop) && originaltimestamp.isBefore(shiftstopplus)) || originaltimestamp.isEqual(shiftstopplus)) {
                        adjustmenttype = "Shift Stop"; 
                        adjustedtimestamp = shiftstop;         
-                   }
+                    }
                    
-                   //Late lunch departure
-                   if (originaltimestamp.isAfter(lunchstart) || (originaltimestamp.isBefore(lunchstop) && originaltimestamp.isEqual(lunchstop))){
+                    //Late lunch departure
+                    else if (originaltimestamp.isAfter(lunchstart) && (originaltimestamp.isBefore(lunchstop) || originaltimestamp.isEqual(lunchstop))){
                        adjustmenttype = "Lunch Start";
                        adjustedtimestamp = lunchstart;    
-                   }
-               else{
-                   //interval rule. 
+                    }
+                    
+                else{
+                    //interval rule. 
                    
-                   //If punch occurs zones on weekend round up or down to nearest increment. 
+                    //If punch occurs zones on weekend round up or down to nearest increment. 
                    
-               }
-               
-                   
+                }
            }
            
            
@@ -397,7 +403,7 @@ public class Punch {
             //assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 07:00:00 (Shift Start)", p1.printAdjusted());
          
 */
-        }
+            }
         }
         
         public String printAdjusted(){
@@ -405,15 +411,11 @@ public class Punch {
             //String builder to format the adjusted type. 
             StringBuilder s = new StringBuilder();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-            
-                
-               
+
             s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
             s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
             s.append(" (").append(adjustmenttype).append(")");
             System.out.println(s);
-            
-           
             
             return s.toString();
         }
