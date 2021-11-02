@@ -84,6 +84,10 @@ public class Punch {
         public String getAdjustmenttype() {
             return adjustmenttype;
         }
+        public LocalDateTime getAdjustedtimestamp(){
+            return adjustedtimestamp;
+        }
+       
       
         public void setOriginalTimeStamp(LocalDateTime originaltimestamp) {
             this.originaltimestamp = originaltimestamp;
@@ -133,201 +137,7 @@ public class Punch {
             int half = s.getInterval()/2; 
             long roundlong;
             
-            //Punchtypes
-            if(punchtypeid == PunchType.CLOCK_IN){
-               
-                //weekdays 
-                if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
-                   
-                    if (originaltimestamp/*.withSecond(0).withNano(0)*/.isEqual(shiftstart)) {
-                        adjustmenttype = "None";
-                        adjustedtimestamp = shiftstart;
-                    }  
-                    
-                    else if (originaltimestamp/*.withSecond(0).withNano(0)*/.isEqual(lunchstop)) {
-                        adjustmenttype = "None";
-                        adjustedtimestamp = lunchstop;
-                    }
-                   
-                    //Early Shift start 
-                    else if((originaltimestamp.isAfter(shiftstartminus) && originaltimestamp.isEqual(shiftstartminus)) || originaltimestamp.isBefore(shiftstart)) { // equal????
-                        adjustmenttype = "Shift Start";
-                        adjustedtimestamp = shiftstart; 
-                    }
-                   
-                    //Late Shift start within Grace period
-                    else if ((originaltimestamp.isAfter(shiftstart) && originaltimestamp.isEqual(shiftstart)) || originaltimestamp.isBefore(shiftstartgrace)) { 
-                        adjustmenttype = "Shift Start";
-                        adjustedtimestamp = shiftstart; 
-                    }
-                    
-                    //Late shift start outside grace period
-                    else if ((originaltimestamp.isAfter(shiftstartgrace) && originaltimestamp.isEqual(shiftstartgrace)) || originaltimestamp.isBefore(shiftstartplus)) {
-                        adjustmenttype = "Shift Dock";
-                        adjustedtimestamp = shiftstartdockplus;
-
-                    }
-                    
-                    //Early Lunch return.
-                    else if ((originaltimestamp.isAfter(lunchstart) && originaltimestamp.isEqual(lunchstart)) || originaltimestamp.isBefore(lunchstop)) {
-                        adjustmenttype = "Lunch Stop"; 
-                        adjustedtimestamp = lunchstop; 
-                        //round to lunch stop
-                    }
-                    
-                    else {
-                        //round down.
-                        if(roundint < half) { 
-                            roundlong = new Long(roundint);
-                            adjustmenttype = "Interval Round";
-                            adjustedtimestamp = originaltimestamp.minusMinutes(roundlong).withSecond(0);
-                        } 
-                        
-                        //round up.
-                        else if(roundint >= half){ 
-                            roundlong = new Long(s.getInterval() - roundint);
-                            adjustmenttype = "Interval Round";
-                            adjustedtimestamp = originaltimestamp.plusMinutes(roundlong).withSecond(0);
-                        }
-                    }
-                }
-                    
-                else{
-                    // This ELSE for Saturday/CLOCK_IN.
-            
-                    //round down.
-                    if(roundint < half) { 
-                        roundlong = new Long(roundint);
-                        adjustmenttype = "Interval Round";
-                        adjustedtimestamp = originaltimestamp.minusMinutes(roundlong).withSecond(0);
-                    }    
-                    
-                    //round up.
-                    else if(roundint >= half){ 
-                        roundlong = new Long(s.getInterval() - roundint);
-                        adjustmenttype = "Interval Round";
-                        adjustedtimestamp = originaltimestamp.plusMinutes(roundlong).withSecond(0);
-                    }
-                }
-            }
- 
-            else if (punchtypeid == PunchType.CLOCK_OUT){
-               
-                //weekdays
-                if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
-                 
-                    //PROBLEM: 
-                    //There is a 37 second difference between either of the first two if statements.
-                    //the first two conditions need to have a isEqual to their minutes. 
-                    //Find a way to compare originaltimestamps's minutes to shiftstop or lunchstart.
-                    if (originaltimestamp.isEqual(shiftstop)) {
-                        adjustmenttype = "None";
-                        adjustedtimestamp = shiftstop;
-                    } 
-                   
-                    else if (originaltimestamp.isEqual(lunchstart)) {
-                        adjustmenttype = "None";
-                        adjustedtimestamp = lunchstart;
-                    }
-                    
-                    //Early departure outside grace period.
-                    else if((originaltimestamp.isAfter(shiftstopminus) || originaltimestamp.isEqual(shiftstopminus))&& 
-                            (originaltimestamp.isBefore(shiftstopgrace) || originaltimestamp.isEqual(shiftstopgrace))){
-                        adjustmenttype = "Shift Dock";
-                        adjustedtimestamp = shiftstopdockminus; 
-                    }
-                    
-                    //early departure within grace period. 
-                    else if(originaltimestamp.isAfter(shiftstopgrace) && (originaltimestamp.isBefore(shiftstop) || originaltimestamp.isEqual(shiftstop))){
-                        adjustmenttype = "Shift Stop"; 
-                        adjustedtimestamp = shiftstop; 
-                    }
-                    
-                    //Late departure. 
-                    else if ((originaltimestamp.isAfter(shiftstop) && originaltimestamp.isBefore(shiftstopplus)) || originaltimestamp.isEqual(shiftstopplus)) {
-                        adjustmenttype = "Shift Stop"; 
-                        adjustedtimestamp = shiftstop;         
-                    }
-                   
-                    //Late lunch departure
-                    else if (originaltimestamp.isAfter(lunchstart) && (originaltimestamp.isBefore(lunchstop) || originaltimestamp.isEqual(lunchstop))){
-                        adjustmenttype = "Lunch Start";
-                        adjustedtimestamp = lunchstart;    
-                    }
-                    else {
-                        //round down.
-                        if(roundint < half) { 
-                            roundlong = new Long(roundint);
-                            adjustmenttype = "Interval Round";
-                            adjustedtimestamp = originaltimestamp.minusMinutes(roundlong).withSecond(0);
-                        } 
-                        
-                        //round up.
-                        else if(roundint >= half){ 
-                            roundlong = new Long(s.getInterval() - roundint);
-                            adjustmenttype = "Interval Round";
-                            adjustedtimestamp = originaltimestamp.plusMinutes(roundlong).withSecond(0);
-                        }
-                    }
-                }
-                else{
-                    // This ELSE for Saturday/CLOCK_OUT.
-                    
-                    //round down.
-                    if(roundint < half) { 
-                        roundlong = new Long(roundint);
-                        adjustmenttype = "Interval Round";
-                        adjustedtimestamp = originaltimestamp.minusMinutes(roundlong).withSecond(0);
-                    }    
-
-                    //round up.
-                    else if(roundint >= half){ 
-                        roundlong = new Long(s.getInterval() - roundint);
-                        adjustmenttype = "Interval Round";
-                        adjustedtimestamp = originaltimestamp.plusMinutes(roundlong).withSecond(0);
-                    }
-                }
-            }
-        }
        
-        public String printAdjusted(){
-
-        LocalDateTime shiftstart = s.getStart().atDate(originaltimestamp.toLocalDate());//Shift start
-        shiftstart = shiftstart.withSecond(0).withNano(0);
-       
-        LocalDateTime shiftstop = s.getStop().atDate(originaltimestamp.toLocalDate()); //Shift stop
-        shiftstop = shiftstop.withSecond(0).withNano(0);
-
-            //String builder to format the adjusted type. 
-            StringBuilder s = new StringBuilder();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-
-            s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
-            s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
-            s.append(" (").append(adjustmenttype).append(")");
-            System.out.println(s);
-            
-            return s.toString();
-        
-        LocalDateTime lunchstart = s.getLunchStart().atDate(originaltimestamp.toLocalDate()); //Lunch start
-        LocalDateTime lunchstop = s.getLunchStop().atDate(originaltimestamp.toLocalDate()); //Lunch stop
-           
-        LocalDateTime shiftstartgrace = shiftstart.plusMinutes(s.getGracePeriod()); //Shift start grace period
-        LocalDateTime shiftstopgrace = shiftstop.minusMinutes(s.getGracePeriod()); //Shift stop grace period
-           
-        LocalDateTime shiftstartplus = shiftstart.plusMinutes(s.getInterval()); //After shift start time
-        LocalDateTime shiftstartminus = shiftstart.minusMinutes(s.getInterval()); //Before shift start time
-           
-        LocalDateTime shiftstopplus = shiftstop.plusMinutes(s.getInterval()); //Before shift stop time
-        LocalDateTime shiftstopminus = shiftstop.minusMinutes(s.getInterval()); //After shift stop time
-           
-        LocalDateTime shiftstartdockplus = shiftstart.plusMinutes(s.getDock()); //Shift start dock time
-        LocalDateTime shiftstopdockminus = shiftstop.minusMinutes(s.getDock()); //Shift stop dock time
-            
-        int dayofweek = originaltimestamp.get(usweekday);
-        int roundint = originaltimestamp.toLocalTime().getMinute() % s.getInterval(); 
-        int half = s.getInterval()/2; 
-        long roundlong;
             
         //Punchtypes
         if(punchtypeid == PunchType.CLOCK_IN){
@@ -509,20 +319,24 @@ public class Punch {
             }
         }
     
-        
-    public String printAdjusted(){
+        }
+       
+        public String printAdjusted(){
 
-        //String builder to format the adjusted type. 
-        StringBuilder s = new StringBuilder();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
+            //String builder to format the adjusted type. 
+            StringBuilder s = new StringBuilder();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
 
-        s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
-        s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
-        s.append(" (").append(adjustmenttype).append(")");
-        System.out.println(s);
+            s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
+            s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
+            s.append(" (").append(adjustmenttype).append(")");
+            System.out.println(s);
             
-        return s.toString();
-    }
+            return s.toString();
+        
+        }
+        
+
 
     public String printOriginal(){
             
