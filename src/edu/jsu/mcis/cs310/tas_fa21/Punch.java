@@ -33,7 +33,7 @@ public class Punch {
 
 //Constructor
 
-      public Punch(int terminalid, Badge badgeid, int punchtypeid) {
+    public Punch(int terminalid, Badge badgeid, int punchtypeid) {
           
         this.badgeid = badgeid; //badgeid.getId(); 
         this.terminalid = terminalid;
@@ -93,7 +93,7 @@ public class Punch {
             this.adjustmenttype = adjustmenttype;
         }
         
-        public void adjust(Shift s){
+    public void adjust(Shift s){
             
             TemporalField usweekday = WeekFields.of(Locale.US).dayOfWeek();
            
@@ -296,7 +296,7 @@ public class Punch {
             return s.toString();
         
         }
-
+ 
         public String printOriginal() {
             
             StringBuilder s = new StringBuilder();
