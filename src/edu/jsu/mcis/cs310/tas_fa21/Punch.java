@@ -135,7 +135,7 @@ public class Punch {
                 if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
                     //conditioned if statements.
                    
-                    if (originaltimestamp.withSecond(0).withNano(0).equals(shiftstart)) {
+                    if (originaltimestamp.withSecond(0).withNano(0).isEqual(shiftstart)) {
                         adjustmenttype = "None";
                         adjustedtimestamp = shiftstart;
                     }  
@@ -171,14 +171,13 @@ public class Punch {
                         adjustedtimestamp = lunchstop; 
                         //round to lunch stop
                     }
-                   
-                } 
+                }
+                    
                 else{
                     int roundint = originaltimestamp.toLocalTime().getMinute() % s.getInterval(); 
-                    //int minutes = originaltimestamp.toLocalTime().getMinute();
                     int half = s.getInterval()/2; 
                     long roundlong;
-                    
+
                     System.out.println("interval " + s.getInterval());
                     System.out.println("getMinute " + originaltimestamp.toLocalTime().getMinute());
                     System.out.println("round " + roundint);
@@ -191,7 +190,6 @@ public class Punch {
                         System.out.println("IR adjustedtimestamp " + adjustedtimestamp);
                     }    
                     else if(roundint >= half){ //round up.
-                    //adjustedtimestamp = originaltimestamp. + ((s.getInterval() - round)* 60 * 1000);
                         roundlong = new Long(s.getInterval() - roundint);
                         adjustmenttype = "Interval Round";
                         adjustedtimestamp = originaltimestamp.plusMinutes(roundlong).withSecond(0);
@@ -206,10 +204,7 @@ public class Punch {
                 if(dayofweek != Calendar.SATURDAY && dayofweek != Calendar.SUNDAY){
                     //conditioned if statements. 
                    
-                    //System.out.println("OTS clock_out " + originaltimestamp.withSecond(0).withNano(0));
-                    //System.out.println("clock_out shift stop " + shiftstop);
-                   
-                    if (originaltimestamp.withSecond(0).withNano(0).equals(shiftstop)) {
+                    if (originaltimestamp.withSecond(0).withNano(0).isEqual(shiftstop)) {
                         adjustmenttype = "None";
                         adjustedtimestamp = shiftstop;
                     } 
@@ -243,14 +238,14 @@ public class Punch {
                         adjustmenttype = "Lunch Start";
                         adjustedtimestamp = lunchstart;    
                     }
-                    
+                }
                 else{
-                        
+
                     int roundint = originaltimestamp.toLocalTime().getMinute() % s.getInterval(); 
                     //int minutes = originaltimestamp.toLocalTime().getMinute();
                     int half = s.getInterval()/2; 
                     long roundlong;
-                    
+
                     System.out.println("interval " + s.getInterval());
                     System.out.println("getMinute " + originaltimestamp.toLocalTime().getMinute());
                     System.out.println("round " + roundint);
@@ -274,8 +269,7 @@ public class Punch {
                 }
             }
         }
-    }
-        
+       
         public String printAdjusted(){
             
             //String builder to format the adjusted type. 
