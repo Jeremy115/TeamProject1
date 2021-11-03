@@ -29,9 +29,6 @@ public class Punch {
         private PunchType punchtypeid;  
         private String adjustmenttype;
         private LocalDateTime adjustedtimestamp;
-        
-
-   
 
 //Constructor
 
@@ -41,103 +38,96 @@ public class Punch {
         this.terminalid = terminalid;
         this.originaltimestamp = LocalDateTime.now();
         this.punchtypeid = PunchType.values()[punchtypeid];
+        //this.id = 0;
         this.adjustedtimestamp = LocalDateTime.now(); 
         this.adjustmenttype = null;
     }
       
-    public Punch(int terminalid, Badge badgeid, int punchtypeid, LocalDateTime ts) {
+    public Punch(int terminalid, Badge badgeid, int punchtypeid, LocalDateTime ts, int punchid) {
           
         this.badgeid = badgeid; //badgeid.getId(); 
         this.terminalid = terminalid;
         this.originaltimestamp = ts;
         this.punchtypeid = PunchType.values()[punchtypeid];
+        this.id = punchid;
+
         this.adjustedtimestamp = ts; 
         this.adjustmenttype = null;
     }
      
 //Getters
 
-
-	public int getId(){
-            return id; 
-	}
-       public void setId(int id){
-           this.id = id;
-       }
-        public int getTerminalid(){
-            return terminalid;
-        }
-        
-        public Badge getBadge(){
-            return badgeid;
-        }
-        
-        public LocalDateTime getOriginaltimestamp() {
-            return originaltimestamp;
-        }
-
-     
-        public PunchType getPunchtype() {
-            return punchtypeid;
-        }
-        
-        public String getAdjustmenttype() {
-            return adjustmenttype;
-        }
-        public LocalDateTime getAdjustedtimestamp(){
-            return adjustedtimestamp;
-        }
+    public int getId(){
+        return id; 
+    }
        
-      
-        public void setOriginalTimeStamp(LocalDateTime originaltimestamp) {
-            this.originaltimestamp = originaltimestamp;
-        }
-        
-   
+    public int getTerminalid(){
+        return terminalid;
+    }
 
+    public void setId(int id){
+        this.id = id;
+    }
+        
+    public Badge getBadge(){
+        return badgeid;
+    }
+        
+    public LocalDateTime getOriginaltimestamp() {
+        return originaltimestamp;
+    }
+     
+    public PunchType getPunchtype() {
+        return punchtypeid;
+    }
+        
+    public String getAdjustmenttype() {
+        return adjustmenttype;
+    }
+    
+    public LocalDateTime getAdjustedtimestamp(){
+        return adjustedtimestamp;
+    }
+    
+    public void setOriginalTimeStamp(LocalDateTime originaltimestamp) {
+        this.originaltimestamp = originaltimestamp;
+    }
+        
     public void setAdjustmenttype(String adjustmenttype) {
         this.adjustmenttype = adjustmenttype;
     }
-
         
     public void adjust(Shift s){
-            
 
-            TemporalField usweekday = WeekFields.of(Locale.US).dayOfWeek();
-
-       
-
+        TemporalField usweekday = WeekFields.of(Locale.US).dayOfWeek();
            
         //LocalDateTime variables to compare when employee punches in or out of clock
-         
 
-            LocalDateTime shiftstart = s.getStart().atDate(originaltimestamp.toLocalDate());//Shift start
-            shiftstart = shiftstart.withSecond(0).withNano(0);
+        LocalDateTime shiftstart = s.getStart().atDate(originaltimestamp.toLocalDate());//Shift start
+        shiftstart = shiftstart.withSecond(0).withNano(0);
        
-            LocalDateTime shiftstop = s.getStop().atDate(originaltimestamp.toLocalDate()); //Shift stop
-            shiftstop = shiftstop.withSecond(0).withNano(0);
+        LocalDateTime shiftstop = s.getStop().atDate(originaltimestamp.toLocalDate()); //Shift stop
+        shiftstop = shiftstop.withSecond(0).withNano(0);
             
-            LocalDateTime lunchstart = s.getLunchStart().atDate(originaltimestamp.toLocalDate()); //Lunch start
-            LocalDateTime lunchstop = s.getLunchStop().atDate(originaltimestamp.toLocalDate()); //Lunch stop
+        LocalDateTime lunchstart = s.getLunchStart().atDate(originaltimestamp.toLocalDate()); //Lunch start
+        LocalDateTime lunchstop = s.getLunchStop().atDate(originaltimestamp.toLocalDate()); //Lunch stop
            
-            LocalDateTime shiftstartgrace = shiftstart.plusMinutes(s.getGracePeriod()); //Shift start grace period
-            LocalDateTime shiftstopgrace = shiftstop.minusMinutes(s.getGracePeriod()); //Shift stop grace period
+        LocalDateTime shiftstartgrace = shiftstart.plusMinutes(s.getGracePeriod()); //Shift start grace period
+        LocalDateTime shiftstopgrace = shiftstop.minusMinutes(s.getGracePeriod()); //Shift stop grace period
            
-            LocalDateTime shiftstartplus = shiftstart.plusMinutes(s.getInterval()); //After shift start time
-            LocalDateTime shiftstartminus = shiftstart.minusMinutes(s.getInterval()); //Before shift start time
+        LocalDateTime shiftstartplus = shiftstart.plusMinutes(s.getInterval()); //After shift start time
+        LocalDateTime shiftstartminus = shiftstart.minusMinutes(s.getInterval()); //Before shift start time
            
-            LocalDateTime shiftstopplus = shiftstop.plusMinutes(s.getInterval()); //Before shift stop time
-            LocalDateTime shiftstopminus = shiftstop.minusMinutes(s.getInterval()); //After shift stop time
+        LocalDateTime shiftstopplus = shiftstop.plusMinutes(s.getInterval()); //Before shift stop time
+        LocalDateTime shiftstopminus = shiftstop.minusMinutes(s.getInterval()); //After shift stop time
            
-            LocalDateTime shiftstartdockplus = shiftstart.plusMinutes(s.getDock()); //Shift start dock time
-            LocalDateTime shiftstopdockminus = shiftstop.minusMinutes(s.getDock()); //Shift stop dock time
+        LocalDateTime shiftstartdockplus = shiftstart.plusMinutes(s.getDock()); //Shift start dock time
+        LocalDateTime shiftstopdockminus = shiftstop.minusMinutes(s.getDock()); //Shift stop dock time
             
-            int dayofweek = originaltimestamp.get(usweekday);
-            int roundint = originaltimestamp.toLocalTime().getMinute() % s.getInterval(); 
-            int half = s.getInterval()/2; 
-            long roundlong;
-            
-       
+        int dayofweek = originaltimestamp.get(usweekday);
+        int roundint = originaltimestamp.toLocalTime().getMinute() % s.getInterval(); 
+        int half = s.getInterval()/2; 
+        long roundlong;
             
         //Punchtypes
         if(punchtypeid == PunchType.CLOCK_IN){
@@ -318,25 +308,22 @@ public class Punch {
                 }
             }
         }
-    
-        }
+    }
        
-        public String printAdjusted(){
+    public String printAdjusted(){
 
-            //String builder to format the adjusted type. 
-            StringBuilder s = new StringBuilder();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
+        //String builder to format the adjusted type. 
+        StringBuilder s = new StringBuilder();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
 
-            s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
-            s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
-            s.append(" (").append(adjustmenttype).append(")");
-            System.out.println(s);
+        s.append('#').append(badgeid.getId()).append(" ").append(punchtypeid);
+        s.append(": ").append(formatter.format(adjustedtimestamp).toUpperCase());
+        s.append(" (").append(adjustmenttype).append(")");
+        System.out.println(s);
             
-            return s.toString();
+        return s.toString();
         
-        }
-        
-
+    }
 
     public String printOriginal(){
             
@@ -349,5 +336,4 @@ public class Punch {
 
         return s.toString();
     } 
-
 }
