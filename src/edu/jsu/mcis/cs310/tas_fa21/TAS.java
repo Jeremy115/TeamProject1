@@ -92,7 +92,7 @@ public class TAS {
         
         //Creates jsonData Array. 
         ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
-        
+        //Formats the originaltimestamp and adjustedtimestamp to format to the array when it is compared in the test class. 
         DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE" + " LL/dd/uuuu HH:mm:ss" );
         
         //Checks for instances of the punch to the dailypunchlist.

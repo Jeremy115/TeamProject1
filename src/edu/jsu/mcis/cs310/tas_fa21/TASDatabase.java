@@ -151,6 +151,8 @@ public class TASDatabase {
                     LocalTime lunchstart = LocalTime.parse(resultset.getString("lunchstart"));
                     LocalTime lunchstop = LocalTime.parse(resultset.getString("lunchstop"));
                     int lunchdeduct = resultset.getInt("lunchdeduct");
+                   
+                    
                        
                     outputShift = new Shift(id,description, start, stop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct);
                     System.out.println(outputShift);
