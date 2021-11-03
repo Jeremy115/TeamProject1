@@ -12,15 +12,18 @@ import java.time.format.DateTimeFormatter;
 
 public class Absenteeism {
     
+    
     private String badgeid; 
-    private LocalDateTime payperiodtimestamp; 
-    private double abpercent; 
+    private LocalDateTime payperiod; 
+    private double percentage; 
+    
+    
     
     public Absenteeism(String badgeid, LocalDateTime payperiodtimestamp, double abpercent){
         
         this.badgeid = badgeid;
-        this.payperiodtimestamp = payperiodtimestamp; 
-        this.abpercent = abpercent; 
+        this.payperiod = payperiodtimestamp; 
+        this.percentage = abpercent; 
     }
     
 //Getters.     
@@ -29,11 +32,11 @@ public class Absenteeism {
     }
     
     public LocalDateTime getPayperiod(){
-        return payperiodtimestamp;
+        return payperiod;
     }
     
     public double getPercentage(){
-        return abpercent; 
+        return percentage; 
     }
     
     public void setBadgeid(String badgeid){
@@ -41,11 +44,11 @@ public class Absenteeism {
     }
     
     public void setPayPeriod(LocalDateTime payperiodtimestamp){
-        this.payperiodtimestamp = payperiodtimestamp;
+        this.payperiod = payperiodtimestamp;
     }
     
     public void setPercentage(double abpercent){
-        this.abpercent = abpercent; 
+        this.percentage = abpercent; 
     }
     
     
@@ -58,8 +61,9 @@ public class Absenteeism {
         DateTimeFormatter format = DateTimeFormatter.ofPattern(" LL-dd-uuuu");
         
         // ("#F1EE0555 (Pay Period Starting 08-05-2018): -20.00%"
+        
         a.append("#").append(badgeid).append(" (").append("Pay Period Starting");
-        a.append(payperiodtimestamp.format(format)).append("): ").append(abpercent).append("%");
+        a.append(payperiod.format(format)).append("): ").append(percentage).append("%");
         
         return a.toString(); 
     }
