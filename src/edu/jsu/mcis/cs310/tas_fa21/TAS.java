@@ -71,6 +71,7 @@ public class TAS {
         }//Exceptions for the 2nd test in the feature 4 test. 
         catch(IndexOutOfBoundsException e){System.out.println("calculateTotalMinutes Error!" + e);} 
         catch(Exception e){e.printStackTrace();}
+        
        
         //returns the entire amount of time allocated during the two punch times.
         //System.out.println("Here is the total: " + time);

@@ -32,7 +32,7 @@ public class TASDatabase {
         try {
             /* Identify the Server */
                 
-            String server = ("jdbc:mysql://localhost/tas_fa21_v1");
+            String server = ("jdbc:mysql://localhost/tas_fa21_v1?useSSL=false");
             String username = "team";
             String password = "CS488";
             System.out.println("Connecting to " + server + "...");
@@ -79,7 +79,7 @@ public class TASDatabase {
         Badge outputBadge = null;
             
         try {
-            query = "SELECT * from badge where id = ?"; //\"" + id + "\"";
+            query = "SELECT * from badge where id = ?"; 
             pstSelect = conn.prepareStatement(query);
             pstSelect.setString(1, id);
                 
@@ -167,9 +167,9 @@ public class TASDatabase {
     public Shift getShift(Badge badge){
         try{
 
-            query = "SELECT * FROM tas_fa21_v1.employee WHERE badgeid = \""+ badge.getId() +"\"";
+            query = "SELECT * FROM tas_fa21_v1.employee WHERE badgeid = ?";
             pstSelect = conn.prepareStatement(query);
-            //pstSelect.setString(1, badge.getId();
+            pstSelect.setString(1, badge.getId());
                
             hasresults = pstSelect.execute();
                
@@ -220,8 +220,9 @@ public class TASDatabase {
                 }
             }
         }
-        catch(SQLException e){ System.out.println("insertPunch: " + e);}
-        System.err.println("New Punch ID: " + results);
+        catch(SQLException e){ System.err.println("insertPunch: " + e);}
+        //System.err.println("New Punch ID: " + results);
+        
         return results;    
     }
         
@@ -258,6 +259,12 @@ public class TASDatabase {
         catch(SQLException e){ System.out.println("getDailyPunchList: " + e);/*printStackTrace();*/ 
         }
         return output;
+    }
+    public ArrayList<Punch> getPayPeriodPunchList(Badge badge, long date){
+        
+        
+
+    return null;
     }
 }
 

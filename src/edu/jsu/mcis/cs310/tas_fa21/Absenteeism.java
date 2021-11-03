@@ -6,20 +6,19 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
 public class Absenteeism {
     
     
-    private String badgeid; 
-    private LocalDateTime payperiod; 
+    private Badge badgeid; 
+    private LocalDate payperiod; 
     private double percentage; 
     
     
     
-    public Absenteeism(String badgeid, LocalDateTime payperiodtimestamp, double abpercent){
+    public Absenteeism(Badge badgeid, LocalDate payperiodtimestamp, double abpercent){
         
         this.badgeid = badgeid;
         this.payperiod = payperiodtimestamp; 
@@ -27,11 +26,11 @@ public class Absenteeism {
     }
     
 //Getters.     
-    public String getBadgeid(){
+    public Badge getBadgeid(){
         return badgeid; 
     }
     
-    public LocalDateTime getPayperiod(){
+    public LocalDate getPayperiod(){
         return payperiod;
     }
     
@@ -39,11 +38,11 @@ public class Absenteeism {
         return percentage; 
     }
     
-    public void setBadgeid(String badgeid){
+    public void setBadgeid(Badge badgeid){
         this.badgeid = badgeid; 
     }
     
-    public void setPayPeriod(LocalDateTime payperiodtimestamp){
+    public void setPayPeriod(LocalDate payperiodtimestamp){
         this.payperiod = payperiodtimestamp;
     }
     
@@ -58,13 +57,14 @@ public class Absenteeism {
         
         StringBuilder a = new StringBuilder(); 
         
-        DateTimeFormatter format = DateTimeFormatter.ofPattern(" LL-dd-uuuu");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(" MM-dd-yyyy");
         
         // ("#F1EE0555 (Pay Period Starting 08-05-2018): -20.00%"
         
         a.append("#").append(badgeid).append(" (").append("Pay Period Starting");
         a.append(payperiod.format(format)).append("): ").append(percentage).append("%");
         
+        System.out.println(a);
         return a.toString(); 
     }
     

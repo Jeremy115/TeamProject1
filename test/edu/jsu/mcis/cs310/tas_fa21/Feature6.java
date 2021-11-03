@@ -1,7 +1,7 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -11,7 +11,9 @@ public class Feature6 {
     
     @Before
     public void setup() {
+        
         db = new TASDatabase();
+        
     }
     
     @Test
@@ -20,23 +22,13 @@ public class Feature6 {
         /* Get Punch */
         
         Punch p = db.getPunch(3634);
-        Badge b = db.getBadge(p.getBadgeid());
+        Badge b = p.getBadge();
         Shift s = db.getShift(b);
         
         /* Get Pay Period Punch List */
         
-        long ts = p.getOriginaltimestamp();
-        ArrayList<Punch> punchlist = db.getPayPeriodPunchList(b, ts);
-
-        /* Adjust Punches */
-        
-        for (Punch punch : punchlist) {
-            punch.adjust(s);
-            System.out.println(punch.printOriginalTimestamp());
-            System.out.println(punch.printAdjustedTimestamp());
-            System.out.println();
-            
-        }
+        LocalDateTime ts = p.getOriginaltimestamp();
+        ArrayList<Punch> punchlist = db.getPayPeriodPunchList(b, ts.toLocalDate(), s);
         
         /* Compute Pay Period Total Absenteeism */
         
@@ -44,12 +36,12 @@ public class Feature6 {
         
         /* Insert Absenteeism Into Database */
         
-        Absenteeism a1 = new Absenteeism(b.getId(), ts, percentage);
+        Absenteeism a1 = new Absenteeism(b, ts.toLocalDate(), percentage);
         db.insertAbsenteeism(a1);
         
         /* Retrieve Absenteeism From Database */
         
-        Absenteeism a2 = db.getAbsenteeism(b.getId(), ts);
+        Absenteeism a2 = db.getAbsenteeism(b, ts.toLocalDate());
         
         /* Compare to Expected Value */
         
@@ -63,19 +55,13 @@ public class Feature6 {
         /* Get Punch */
         
         Punch p = db.getPunch(1087);
-        Badge b = db.getBadge(p.getBadgeid());
+        Badge b = p.getBadge();
         Shift s = db.getShift(b);
         
         /* Get Pay Period Punch List */
         
-        long ts = p.getOriginaltimestamp();
-        ArrayList<Punch> punchlist = db.getPayPeriodPunchList(b, ts);
-
-        /* Adjust Punches */
-        
-        for (Punch punch : punchlist) {
-            punch.adjust(s);
-        }
+        LocalDateTime ts = p.getOriginaltimestamp();
+        ArrayList<Punch> punchlist = db.getPayPeriodPunchList(b, ts.toLocalDate(), s);
         
         /* Compute Pay Period Total Absenteeism */
         
@@ -83,12 +69,12 @@ public class Feature6 {
         
         /* Insert Absenteeism Into Database */
         
-        Absenteeism a1 = new Absenteeism(b.getId(), ts, percentage);
+        Absenteeism a1 = new Absenteeism(b, ts.toLocalDate(), percentage);
         db.insertAbsenteeism(a1);
         
         /* Retrieve Absenteeism From Database */
         
-        Absenteeism a2 = db.getAbsenteeism(b.getId(), ts);
+        Absenteeism a2 = db.getAbsenteeism(b, ts.toLocalDate());
         
         /* Compare to Expected Value */
         
@@ -102,19 +88,13 @@ public class Feature6 {
         /* Get Punch */
         
         Punch p = db.getPunch(4943);
-        Badge b = db.getBadge(p.getBadgeid());
+        Badge b = p.getBadge();
         Shift s = db.getShift(b);
         
         /* Get Pay Period Punch List */
         
-        long ts = p.getOriginaltimestamp();
-        ArrayList<Punch> punchlist = db.getPayPeriodPunchList(b, ts);
-
-        /* Adjust Punches */
-        
-        for (Punch punch : punchlist) {
-            punch.adjust(s);
-        }
+        LocalDateTime ts = p.getOriginaltimestamp();
+        ArrayList<Punch> punchlist = db.getPayPeriodPunchList(b, ts.toLocalDate(), s);
         
         /* Compute Pay Period Total Absenteeism */
         
@@ -122,12 +102,12 @@ public class Feature6 {
         
         /* Insert Absenteeism Into Database */
         
-        Absenteeism a1 = new Absenteeism(b.getId(), ts, percentage);
+        Absenteeism a1 = new Absenteeism(b, ts.toLocalDate(), percentage);
         db.insertAbsenteeism(a1);
         
         /* Retrieve Absenteeism From Database */
         
-        Absenteeism a2 = db.getAbsenteeism(b.getId(), ts);
+        Absenteeism a2 = db.getAbsenteeism(b, ts.toLocalDate());
         
         /* Compare to Expected Value */
         
