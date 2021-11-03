@@ -63,7 +63,7 @@ public class Punch {
 	public int getId(){
             return id; 
 	}
-
+       
         public int getTerminalid(){
             return terminalid;
         }

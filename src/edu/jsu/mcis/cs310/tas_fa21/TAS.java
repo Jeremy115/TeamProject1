@@ -1,7 +1,10 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import org.json.simple.JSONValue;
 
 public class TAS {
      
@@ -74,5 +77,51 @@ public class TAS {
         return time;//returns the total time accumulated. 
         
     }
-    
+    public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist){
+       /* \"originaltimestamp\":\"TUE 09\\/18\\/2018 11:59:33\",
+        \"badgeid\":\"08D01475\",\
+        "adjustedtimestamp\":\"TUE 09\\/18\\/2018 12:00:00\",\
+        "adjustmenttype\":\"Shift Start\",\
+        "terminalid\":\"104\",\
+        "id\":\"4943\",\
+        "punchtype\":\"CLOCK IN\"
+        */
+        //Above comes from the feature 5 test class. 
+        // Format it the way it is above. 
+        
+        
+        //Creates jsonData Array. 
+        ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
+        
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE" + " LL/dd/uuuu HH:mm:ss" );
+        
+        //Checks for instances of the punch to the dailypunchlist.
+        //iterates through for each instance. 
+        for(Punch punch : dailypunchlist){
+            
+            HashMap<String, String> punchData = new HashMap<>();
+            
+            
+            punchData.put("originaltimestamp", String.valueOf(punch.getOriginaltimestamp().format(format).toUpperCase()));
+            punchData.put("badgeid", String.valueOf(punch.getBadge().getId()));
+            
+            punchData.put("adjustedtimestamp", String.valueOf(punch.getAdjustedtimestamp().format(format).toUpperCase()));
+            punchData.put("adjustmenttype", String.valueOf(punch.getAdjustmenttype()));
+            
+            punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
+            
+            //Why is getId() returning 0????
+            System.out.println("Value of id: " + punch.getId());
+            punchData.put("id",String.valueOf(punch.getId())); // problem here.
+            
+            punchData.put("punchtype", String.valueOf(punch.getPunchtype()));
+            
+            //Adds all punchData HashMap array into the json arraylist(HashMap as well).
+            jsonData.add(punchData);
+        }
+        
+        String json = JSONValue.toJSONString(jsonData);
+        
+        return json;
+    }
 }
