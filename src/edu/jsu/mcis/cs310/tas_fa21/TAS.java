@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.json.simple.JSONValue;
+import org.json.simple.*;
 
 public class TAS {
      
@@ -112,7 +112,7 @@ public class TAS {
             
             //Why is getId() returning 0????
             System.out.println("Value of id: " + punch.getId());
-            punchData.put("id",String.valueOf(punch.getId())); // problem here.
+            punchData.put("id", String.valueOf(punch.getId())); // problem here.
             
             punchData.put("punchtype", String.valueOf(punch.getPunchtype()));
             

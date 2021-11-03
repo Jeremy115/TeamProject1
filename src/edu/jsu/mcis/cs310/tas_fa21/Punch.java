@@ -29,7 +29,7 @@ public class Punch {
         private PunchType punchtypeid;  
         private String adjustmenttype;
         private LocalDateTime adjustedtimestamp;
-        private LocalDateTime ots;
+        
 
    
 
@@ -41,7 +41,6 @@ public class Punch {
         this.terminalid = terminalid;
         this.originaltimestamp = LocalDateTime.now();
         this.punchtypeid = PunchType.values()[punchtypeid];
-        this.id = 0;
         this.adjustedtimestamp = LocalDateTime.now(); 
         this.adjustmenttype = null;
     }
@@ -52,7 +51,6 @@ public class Punch {
         this.terminalid = terminalid;
         this.originaltimestamp = ts;
         this.punchtypeid = PunchType.values()[punchtypeid];
-        this.id = 0;
         this.adjustedtimestamp = ts; 
         this.adjustmenttype = null;
     }
@@ -63,7 +61,9 @@ public class Punch {
 	public int getId(){
             return id; 
 	}
-       
+       public void setId(int id){
+           this.id = id;
+       }
         public int getTerminalid(){
             return terminalid;
         }
