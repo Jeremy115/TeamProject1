@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.json.simple.JSONValue;
+import org.json.simple.*;
 
 public class TAS {
      
@@ -106,6 +106,7 @@ public class TAS {
             punchData.put("adjustmenttype", String.valueOf(punch.getAdjustmenttype()));
             punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
             punchData.put("id",String.valueOf(punch.getId())); // problem here.
+            //System.out.println("Value of id: " + punch.getId());
             punchData.put("punchtype", String.valueOf(punch.getPunchtype()));
             
             //Adds all punchData HashMap array into the json arraylist(HashMap as well).

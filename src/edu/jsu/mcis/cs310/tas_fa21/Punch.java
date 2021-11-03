@@ -29,9 +29,6 @@ public class Punch {
         private PunchType punchtypeid;  
         private String adjustmenttype;
         private LocalDateTime adjustedtimestamp;
-        private LocalDateTime ots;
-
-   
 
 //Constructor
 
@@ -53,6 +50,7 @@ public class Punch {
         this.originaltimestamp = ts;
         this.punchtypeid = PunchType.values()[punchtypeid];
         this.id = punchid;
+
         this.adjustedtimestamp = ts; 
         this.adjustmenttype = null;
     }
@@ -65,6 +63,10 @@ public class Punch {
        
     public int getTerminalid(){
         return terminalid;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
         
     public Badge getBadge(){
