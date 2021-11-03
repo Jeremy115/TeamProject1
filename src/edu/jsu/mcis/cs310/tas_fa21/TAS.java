@@ -48,7 +48,7 @@ public class TAS {
                 time = time + minutesTotal;
 
                 //Prints the total time accumulating.
-                System.out.println(time + "\n");     
+                //System.out.println(time + "\n");     
             }
             
                 //true of false flag to see if they clocked out on time. 
@@ -69,11 +69,11 @@ public class TAS {
                }
                
         }//Exceptions for the 2nd test in the feature 4 test. 
-        catch(IndexOutOfBoundsException e){System.out.println("Error!");} 
+        catch(IndexOutOfBoundsException e){System.out.println("calculateTotalMinutes Error!" + e);} 
         catch(Exception e){e.printStackTrace();}
        
         //returns the entire amount of time allocated during the two punch times.
-        System.out.println("Here is the total: " + time);
+        //System.out.println("Here is the total: " + time);
         return time;//returns the total time accumulated. 
         
     }
@@ -89,7 +89,6 @@ public class TAS {
         //Above comes from the feature 5 test class. 
         // Format it the way it is above. 
         
-        
         //Creates jsonData Array. 
         ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
         
@@ -101,19 +100,12 @@ public class TAS {
             
             HashMap<String, String> punchData = new HashMap<>();
             
-            
             punchData.put("originaltimestamp", String.valueOf(punch.getOriginaltimestamp().format(format).toUpperCase()));
             punchData.put("badgeid", String.valueOf(punch.getBadge().getId()));
-            
             punchData.put("adjustedtimestamp", String.valueOf(punch.getAdjustedtimestamp().format(format).toUpperCase()));
             punchData.put("adjustmenttype", String.valueOf(punch.getAdjustmenttype()));
-            
             punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
-            
-            //Why is getId() returning 0????
-            System.out.println("Value of id: " + punch.getId());
             punchData.put("id",String.valueOf(punch.getId())); // problem here.
-            
             punchData.put("punchtype", String.valueOf(punch.getPunchtype()));
             
             //Adds all punchData HashMap array into the json arraylist(HashMap as well).
@@ -121,7 +113,6 @@ public class TAS {
         }
         
         String json = JSONValue.toJSONString(jsonData);
-        
         return json;
     }
 }
