@@ -13,7 +13,7 @@ public class TAS {
         TASDatabase database = new TASDatabase();
         
         //Deine the punch, badge, shift instances coming in from the database.
-        Punch p = database.getPunch(3634);
+        Punch p = database.getPunch(69);
         Badge b = p.getBadge();
         Shift s = database.getShift(b);
         
@@ -100,16 +100,17 @@ public class TAS {
             
             HashMap<String, String> punchData = new HashMap<>();
             
+            //Adds all data required into the punchData HashMap Array.
+            //Then we add this into the json String. 
             punchData.put("originaltimestamp", String.valueOf(punch.getOriginaltimestamp().format(format).toUpperCase()));
             punchData.put("badgeid", String.valueOf(punch.getBadge().getId()));
             punchData.put("adjustedtimestamp", String.valueOf(punch.getAdjustedtimestamp().format(format).toUpperCase()));
             punchData.put("adjustmenttype", String.valueOf(punch.getAdjustmenttype()));
             punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
-            punchData.put("id",String.valueOf(punch.getId())); // problem here.
-            //System.out.println("Value of id: " + punch.getId());
+            punchData.put("id",String.valueOf(punch.getId())); 
             punchData.put("punchtype", String.valueOf(punch.getPunchtype()));
             
-            //Adds all punchData HashMap array into the json arraylist(HashMap as well).
+            //Adds all punchData HashMap array into the json arraylist(HashMap Array).
             jsonData.add(punchData);
         }
         
