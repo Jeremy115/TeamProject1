@@ -225,6 +225,7 @@ public class TASDatabase {
         
         return results;    
     }
+    
         
     public ArrayList<Punch> getDailyPunchList(Badge badge, LocalDate date){
             
@@ -260,12 +261,71 @@ public class TASDatabase {
         }
         return output;
     }
-    public ArrayList<Punch> getPayPeriodPunchList(Badge badge, long date){
+    
+    //Gets data from database for Absenteeism. 
+    public Absenteeism getAbsenteeism(Badge badge, LocalDate payperiod){
         
+        Absenteeism outputAbsen = null; 
         
-
-    return null;
+        try{
+            
+            //Query for badge and payperiod
+            query = "SELECT * FROM absenteeism WHERE badgeid = ? AND payperiod = ?";
+            pstSelect = conn.prepareStatement(query);
+            pstSelect.setString(1, badge.getId());
+            pstSelect.setDate(2, java.sql.Date.valueOf(payperiod));
+           
+            
+            hasresults = pstSelect.execute();
+            
+            if(hasresults){
+                
+                ResultSet resultset = pstSelect.getResultSet();
+                resultset.next();
+                
+                //get percentage from database as double. 
+                double percentage = resultset.getDouble("percentage");
+                
+                //Add the types into the constructor of the Absenteeism class. 
+                outputAbsen = new Absenteeism(badge, payperiod, percentage);
+                
+            }
+        }catch (SQLException e){ System.out.println("Error in getAbsenteeism: " + e); }
+        
+        return outputAbsen; 
     }
+    
+    
+    public ArrayList<Punch> getPayPeriodPunchList(Badge badge, LocalDate payperiod, Shift s){
+        
+        ArrayList<Punch> punchlist = null;
+       
+        //CLASS 2: 
+        
+        //Accepts a badge object and a timestamp(Expressed as a long integer) value  as arguments
+        
+        //This should retrieve the list of punches from an entire pay period. 
+        //May wish to use getDailyPunchList() internally within this new method. 
+        
+        
+        
+    return punchlist;
+    }
+    
+    public void insertAbsenteeism(Absenteeism absenteeism){
+      
+        
+        //CLASS 3
+        
+        
+        //Should add a new record if a none exists for 
+        //the given badgeid and pay period. 
+        
+        //If it already exists, it should be updated to 
+        //reflect the new absenteeism percentage. 
+        
+         
+     }
 }
 
 

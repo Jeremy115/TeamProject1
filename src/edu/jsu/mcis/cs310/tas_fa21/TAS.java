@@ -118,4 +118,23 @@ public class TAS {
         String json = JSONValue.toJSONString(jsonData);
         return json;
     }
+    
+    
+     public static double calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s){
+        
+        //Accpets a list of all the pucnhes are entered by the employee
+        //within the entire pay period. 
+        
+        //Return the total number of scheduled minutes and the total number of
+        // minutes accrued by the employee using the given 
+        //shift object and Punch collection. 
+        
+        //Take those totals to compute the employee's absenteeism. 
+        //Absenteesim percentage should be returned as a double value. 
+        
+        
+        
+        return 0; 
+    }
+     
 }
