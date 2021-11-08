@@ -14,11 +14,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import static java.util.Collections.list;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 //THIS IS WHERE ALL DATABASE READ CODE WILL GO!!!
 /**
@@ -313,7 +316,14 @@ public class TASDatabase {
         //This should retrieve the list of punches from an entire pay period (SUNDAY - SATURDAY). 
         //May wish to use getDailyPunchList() internally within this new method. 
         
-        LocalDate BeginOfWeek = payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)); 
+        LocalDate BeginOfWeek = payperiod.with(TemporalAdjusters.previousOrSame(Calendar.SUNDAY)); //Begin of payperiod.
+        //SUNDAY IS 0
+        TemporalField fieldUS = WeekFields.of(Locale.US).dayOfWeek();
+        int dayofweek = BeginOfWeek.get(fieldUS);
+        //use Calendar.X  when compairing. 
+        
+        //Set a localdate 
+        LocalDate payperiodstart = payperiod.with(fieldUS, Calendar.SUNDAY); //Assumes "date" is a LocalDate
         
         LocalDate punchDate = BeginOfWeek;
         

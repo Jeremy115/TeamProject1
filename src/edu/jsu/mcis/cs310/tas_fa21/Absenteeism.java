@@ -61,7 +61,7 @@ public class Absenteeism {
         
         // ("#F1EE0555 (Pay Period Starting 08-05-2018): -20.00%"
         
-        a.append("#").append(badgeid).append(" (").append("Pay Period Starting");
+        a.append("#").append(badgeid.getId()).append(" (").append("Pay Period Starting");
         a.append(payperiod.format(format)).append("): ").append(percentage).append("%");
         
         System.out.println(a);
