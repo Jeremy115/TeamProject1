@@ -6,18 +6,18 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
 public class Absenteeism {
     
-    
+  
     private Badge badgeid; 
     private LocalDate payperiod; 
     private double percentage; 
     
-    
-    
+     
     public Absenteeism(Badge badgeid, LocalDate payperiodtimestamp, double abpercent){
         
         this.badgeid = badgeid;

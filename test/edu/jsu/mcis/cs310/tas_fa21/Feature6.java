@@ -99,15 +99,20 @@ public class Feature6 {
         /* Compute Pay Period Total Absenteeism */
         
         double percentage = TAS.calculateAbsenteeism(punchlist, s);
+        //Getting percentage from where?
+        //Calcuates hours from getPayPeriodPunchList(percentage). 
+        //Tkae punch list and get total hours worked / total hours scheduled that ratio. 
         
         /* Insert Absenteeism Into Database */
         
         Absenteeism a1 = new Absenteeism(b, ts.toLocalDate(), percentage);
         db.insertAbsenteeism(a1);
         
+        
         /* Retrieve Absenteeism From Database */
         
         Absenteeism a2 = db.getAbsenteeism(b, ts.toLocalDate());
+        //Gets it from database. 
         
         /* Compare to Expected Value */
         

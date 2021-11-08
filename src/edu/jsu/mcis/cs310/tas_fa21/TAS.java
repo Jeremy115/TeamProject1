@@ -131,10 +131,19 @@ public class TAS {
         
         //Take those totals to compute the employee's absenteeism. 
         //Absenteesim percentage should be returned as a double value. 
+        double percentage = 0; 
+        double totalweekMin = 0; 
+        final double FOURTYHOURS = 2400; 
+        final double TOP_PERCENTAGE = 100; 
         
+        totalweekMin = calculateTotalMinutes(punchlist, s);
         
+        percentage = (totalweekMin/FOURTYHOURS) * TOP_PERCENTAGE;
         
-        return 0; 
+        percentage = TOP_PERCENTAGE - percentage;
+        percentage = Math.round(percentage * TOP_PERCENTAGE)/TOP_PERCENTAGE;
+        
+        return percentage;
     }
      
 }

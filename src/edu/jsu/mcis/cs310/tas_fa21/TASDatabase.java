@@ -4,14 +4,19 @@
  * and open the template in the editor.
  */
 package edu.jsu.mcis.cs310.tas_fa21;
+import static com.sun.tools.attach.VirtualMachine.list;
+import static java.nio.file.Files.list;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Calendar;
+import static java.util.Collections.list;
 import java.util.GregorianCalendar;
 
 //THIS IS WHERE ALL DATABASE READ CODE WILL GO!!!
@@ -284,10 +289,10 @@ public class TASDatabase {
                 resultset.next();
                 
                 //get percentage from database as double. 
-                double percentage = resultset.getDouble("percentage");
+                double abpercentage = resultset.getDouble("percentage");
                 
                 //Add the types into the constructor of the Absenteeism class. 
-                outputAbsen = new Absenteeism(badge, payperiod, percentage);
+                outputAbsen = new Absenteeism(badge, payperiod, abpercentage);
                 
             }
         }catch (SQLException e){ System.out.println("Error in getAbsenteeism: " + e); }
@@ -304,11 +309,19 @@ public class TASDatabase {
         
         //Accepts a badge object and a timestamp(Expressed as a long integer) value  as arguments
         
-        //This should retrieve the list of punches from an entire pay period. 
+        //This should retrieve the list of punches from an entire pay period (SUNDAY - SATURDAY). 
         //May wish to use getDailyPunchList() internally within this new method. 
         
+        LocalDate BeginOfWeek = payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)); 
         
+        LocalDate punchDate = BeginOfWeek;
         
+        for (int i = 0; i < DayOfWeek.SUNDAY.getValue(); i++){
+            punchlist.addAll(getDailyPunchList(badge, payperiod));
+            punchDate = punchDate.plusDays(1);
+        }
+        //Specifiying in query begninning of pay period. 
+        //See if an absenteesim 
     return punchlist;
     }
     
@@ -317,14 +330,29 @@ public class TASDatabase {
         
         //CLASS 3
         
-        
         //Should add a new record if a none exists for 
         //the given badgeid and pay period. 
         
         //If it already exists, it should be updated to 
-        //reflect the new absenteeism percentage. 
+        //reflect the new absenteeism percentage.
         
-         
+        Badge badgeid = absenteeism.getBadgeid();
+        LocalDate payperiod = absenteeism.getPayperiod();
+        Double percentage = absenteeism.getPercentage();
+        
+        String badgeids = badgeid.getId();
+        
+        try{
+            query = "INSERT INTO absenteeism (badgeid, payperiod, percentage) VALUES (?, ?, ?)";
+            pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            
+            pstUpdate.setString(1, badgeids);
+            pstUpdate.setDate(2, java.sql.Date.valueOf(payperiod));
+            pstUpdate.setDouble(3, percentage);
+            
+            updateCount = pstUpdate.executeUpdate();
+            
+        }catch(SQLException e){ System.out.println("Error in insertAbsenteeism: " + e);}     
      }
 }
 
