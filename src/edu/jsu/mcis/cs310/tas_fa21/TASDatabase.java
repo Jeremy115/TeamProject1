@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import static java.util.Collections.list;
 import java.util.GregorianCalendar;
 
@@ -303,7 +304,7 @@ public class TASDatabase {
     
     public ArrayList<Punch> getPayPeriodPunchList(Badge badge, LocalDate payperiod, Shift s){
         
-        ArrayList<Punch> punchlist = null;
+        ArrayList<Punch> punchlist = new ArrayList<>();
        
         //CLASS 2: 
         
