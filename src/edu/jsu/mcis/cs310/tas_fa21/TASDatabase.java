@@ -316,21 +316,67 @@ public class TASDatabase {
         //This should retrieve the list of punches from an entire pay period (SUNDAY - SATURDAY). 
         //May wish to use getDailyPunchList() internally within this new method. 
         
-        LocalDate BeginOfWeek = payperiod.with(TemporalAdjusters.previousOrSame(Calendar.SUNDAY)); //Begin of payperiod.
-        //SUNDAY IS 0
+       // LocalDate BeginOfWeek = payperiod.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)); //Begin of payperiod.
+        //SUNDAY IS 0 an int type
+        //FIRST: Identify the beginning and ending of the payperiod.
+        
         TemporalField fieldUS = WeekFields.of(Locale.US).dayOfWeek();
-        int dayofweek = BeginOfWeek.get(fieldUS);
+        
+        //int dayofweek = payperiod.get(fieldUS);
         //use Calendar.X  when compairing. 
+        Punch obje;
         
-        //Set a localdate 
+        //Set a localdate (First)
         LocalDate payperiodstart = payperiod.with(fieldUS, Calendar.SUNDAY); //Assumes "date" is a LocalDate
+        LocalDate payperiodend = payperiod.with(fieldUS, Calendar.SATURDAY);
         
-        LocalDate punchDate = BeginOfWeek;
         
-        for (int i = 0; i < DayOfWeek.SUNDAY.getValue(); i++){
-            punchlist.addAll(getDailyPunchList(badge, payperiod));
-            punchDate = punchDate.plusDays(1);
-        }
+        try{
+            //SECOND: Get Punches from the database that fall within this range.
+            query = "SELECT * FROM punch WHERE DATE(originaltimestamp) >= ?"
+                    + " AND DATE(originaltimestamp) <= ? AND badgeid = ? ORDER BY originaltimestamp";
+
+            // if they are Less than peyperiodstart or greater than payperiodend. Or between. 
+            //THIRD: iterate through results and create corresponding punch objects, adding each to an ordered collection. 
+            pstSelect = conn.prepareStatement(query);
+            pstSelect.setDate(1, java.sql.Date.valueOf(payperiodstart));
+            pstSelect.setDate(2, java.sql.Date.valueOf(payperiodend));
+            pstSelect.setString(3, badge.getId());
+
+            hasresults = pstSelect.execute();
+            
+            
+
+            if(hasresults){
+                
+                ResultSet resultset = pstSelect.getResultSet();
+
+                while(resultset.next()){
+                    int punchid = resultset.getInt("id");
+                    obje = getPunch(punchid);
+
+                    punchlist.add(obje);
+                }
+                
+            }
+            
+
+            //FOURTH: return the collection.
+        
+        
+        }catch(SQLException e){ System.out.println("Error in getPayPeriodPunchList: " + e); }
+        
+        
+        
+        
+        
+        //getPunch method from and retrun the objects.
+      //  LocalDate punchDate = payperiodstart;
+        
+        //for (int i = 0; i < DayOfWeek.SUNDAY.getValue(); i++){
+          //  punchlist.addAll(getDailyPunchList(badge, payperiodstart));
+            //punchDate = punchDate.plusDays(1);
+        //}
         //Specifiying in query begninning of pay period. 
         //See if an absenteesim 
     return punchlist;
