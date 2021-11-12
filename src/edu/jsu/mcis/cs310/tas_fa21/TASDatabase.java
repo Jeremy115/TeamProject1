@@ -327,14 +327,15 @@ public class TASDatabase {
         Punch obje;
         
         //Set a localdate (First)
+        //Set here. 
         LocalDate payperiodstart = payperiod.with(fieldUS, Calendar.SUNDAY); //Assumes "date" is a LocalDate
         LocalDate payperiodend = payperiod.with(fieldUS, Calendar.SATURDAY);
         
+    
         
         try{
             //SECOND: Get Punches from the database that fall within this range.
-            query = "SELECT * FROM punch WHERE DATE(originaltimestamp) >= ?"
-                    + " AND DATE(originaltimestamp) <= ? AND badgeid = ? ORDER BY originaltimestamp";
+            query = "SELECT * FROM punch WHERE DATE(originaltimestamp) >= ? AND DATE(originaltimestamp) <= ? AND badgeid = ? ORDER BY originaltimestamp";
 
             // if they are Less than peyperiodstart or greater than payperiodend. Or between. 
             //THIRD: iterate through results and create corresponding punch objects, adding each to an ordered collection. 
@@ -346,12 +347,16 @@ public class TASDatabase {
             hasresults = pstSelect.execute();
             
             
+            
+            
 
             if(hasresults){
                 
                 ResultSet resultset = pstSelect.getResultSet();
 
                 while(resultset.next()){
+                    
+                    
                     int punchid = resultset.getInt("id");
                     obje = getPunch(punchid);
 
@@ -359,15 +364,11 @@ public class TASDatabase {
                 }
                 
             }
-            
 
             //FOURTH: return the collection.
         
         
         }catch(SQLException e){ System.out.println("Error in getPayPeriodPunchList: " + e); }
-        
-        
-        
         
         
         //getPunch method from and retrun the objects.
@@ -408,6 +409,7 @@ public class TASDatabase {
             pstUpdate.setDouble(3, percentage);
             
             updateCount = pstUpdate.executeUpdate();
+            
             
         }catch(SQLException e){ System.out.println("Error in insertAbsenteeism: " + e);}     
      }

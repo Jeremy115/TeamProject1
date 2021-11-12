@@ -8,6 +8,10 @@ package edu.jsu.mcis.cs310.tas_fa21;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.Calendar;
+import java.util.Locale;
 
 
 public class Absenteeism {
@@ -21,8 +25,11 @@ public class Absenteeism {
     public Absenteeism(Badge badgeid, LocalDate payperiodtimestamp, double abpercent){
         
         this.badgeid = badgeid;
-        this.payperiod = payperiodtimestamp; 
         this.percentage = abpercent; 
+        
+        TemporalField fieldUS = WeekFields.of(Locale.US).dayOfWeek();
+        this.payperiod = payperiodtimestamp.with(fieldUS, Calendar.SUNDAY);
+        
     }
     
 //Getters.     
