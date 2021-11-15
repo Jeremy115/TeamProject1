@@ -33,8 +33,9 @@ public class TAS {
         
         
         try{
+            
             //get the punchlist to compair the time between them. 
-            for(int i = 0; i < dailypunchlist.size(); i+= 2){
+            for(int i = 0; i < dailypunchlist.size(); i += 2){
                 
                 //Gets time between the adjusted time stamps from punch class. 
                 Duration dur = Duration.between(dailypunchlist.get(i).getAdjustedtimestamp(), dailypunchlist.get(i+1).getAdjustedtimestamp());
@@ -135,7 +136,13 @@ public class TAS {
         double totalweekMin = 0; 
         final double FOURTYHOURS = 2400; 
         final double TOP_PERCENTAGE = 100; 
+        //Get schedule 
         
+        //Get shift Duration9calculate by shift start and shift stop  minus(-) the lunch duration * 5
+        double sch = 1.0; 
+        
+        //Gets minutes
+                
         totalweekMin = calculateTotalMinutes(punchlist, s);
         System.out.println("totalweekMin " + totalweekMin);
         
@@ -144,6 +151,10 @@ public class TAS {
         
         percentage = TOP_PERCENTAGE - percentage;
         System.out.println("percentage2 " + percentage);
+        
+        //The minutes you calculated up divided by the minutes schdueled. 
+        percentage =  (100 - ((double)totalweekMin) / ((double)sch) * 5);
+        
         
         return percentage;
     }

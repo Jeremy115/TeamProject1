@@ -21,6 +21,7 @@ public class Feature4 {
         /* Get Punch */
         
         Punch p = db.getPunch(3634);
+        //Punch p = db.getPunch(3523);
         Badge b = p.getBadge();
         Shift s = db.getShift(b);
         
