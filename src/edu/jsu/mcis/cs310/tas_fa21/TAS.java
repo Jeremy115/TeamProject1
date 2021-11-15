@@ -137,11 +137,13 @@ public class TAS {
         final double TOP_PERCENTAGE = 100; 
         
         totalweekMin = calculateTotalMinutes(punchlist, s);
+        System.out.println("totalweekMin " + totalweekMin);
         
-        percentage = (totalweekMin/FOURTYHOURS) * TOP_PERCENTAGE;
+        percentage = Math.round((totalweekMin/FOURTYHOURS) * TOP_PERCENTAGE);
+        System.out.println("percentage1 " + percentage);
         
         percentage = TOP_PERCENTAGE - percentage;
-        percentage = Math.round(percentage * TOP_PERCENTAGE)/TOP_PERCENTAGE;
+        System.out.println("percentage2 " + percentage);
         
         return percentage;
     }
