@@ -26,9 +26,9 @@ public class Punch {
 	private int terminalid;
         private Badge badgeid; 
         private LocalDateTime originaltimestamp; 
-        private PunchType punchtypeid;  
+        public PunchType punchtypeid;  
         private String adjustmenttype;
-        private LocalDateTime adjustedtimestamp;
+        public LocalDateTime adjustedtimestamp;
 
 //Constructor
 

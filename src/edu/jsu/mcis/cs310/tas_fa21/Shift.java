@@ -17,13 +17,13 @@ public class Shift {
     private int interval; 
     private int dock; 
     private int gracePeriod; //the 5 minute grace period. 
-    private LocalTime start; // start the shift. 
-    private LocalTime stop; // end the shift.
-    private LocalTime lunchstart;//Detects when lunch will start (locally).
-    private LocalTime lunchstop; //Detects when lunch will stop (locally).
-    private int lunchDeductTime; //Will deduct the time from employee.
-    private long lunchduration; //Length of lunch duration.
-    private long shiftduration; //Length of the shift.
+    public LocalTime start; // start the shift. 
+    public LocalTime stop; // end the shift.
+    public LocalTime lunchstart;//Detects when lunch will start (locally).
+    public LocalTime lunchstop; //Detects when lunch will stop (locally).
+    public int lunchDeductTime; //Will deduct the time from employee.
+    public long lunchduration; //Length of lunch duration.
+    public long shiftduration; //Length of the shift.
 
 //Constructor
 

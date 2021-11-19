@@ -1,7 +1,11 @@
 package edu.jsu.mcis.cs310.tas_fa21;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.json.simple.*;
@@ -28,28 +32,31 @@ public class TAS {
         
     }
     public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift){
-        //int time to add up(required to be int from instructions).
         int time = 0; 
-        
         
         try{
             
-            //get the punchlist to compair the time between them. 
-            for(int i = 0; i < dailypunchlist.size(); i += 2){
+            //get the punchlist to compare the time between them. 
+            for(int i = 0; i < dailypunchlist.size(); i ++){
                 
-                //Gets time between the adjusted time stamps from punch class. 
-                Duration dur = Duration.between(dailypunchlist.get(i).getAdjustedtimestamp(), dailypunchlist.get(i+1).getAdjustedtimestamp());
+                System.out.println("i = " + i + " daily punch list " + dailypunchlist.get(i).getAdjustedtimestamp());
 
+                //Gets time between the adjusted time stamps from punch class. 
+                
+                //How do you know the i+1 in statement below is the pair to the shift start/stop or lunch out/in when there are records
+                //with only clock in for shift and clock out for lunch, then the next one is clock in for next shift as an example
+                //Probably have to group by DAY of week not just all punches for the badge/payperiod
+                Duration dur = Duration.between(dailypunchlist.get(i).getAdjustedtimestamp(), dailypunchlist.get(i+1).getAdjustedtimestamp());
                 
                 // accumulates time of minutes between the adjustedtimestamps.
                 int minutesTotal = (int)dur.toMinutes();
-
-
+                System.out.println("minutes between i and i+1 = " + minutesTotal);  
+                
                 //adds up the total time between them.
                 time = time + minutesTotal;
 
                 //Prints the total time accumulating.
-                //System.out.println(time + "\n");     
+                System.out.println("accumulation of minutesTotal = " + time);     
             }
             
                 //true of false flag to see if they clocked out on time. 
@@ -78,7 +85,7 @@ public class TAS {
         //System.out.println("Here is the total: " + time);
         return time;//returns the total time accumulated. 
         
-    }
+    } 
     public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist){
        /* \"originaltimestamp\":\"TUE 09\\/18\\/2018 11:59:33\",
         \"badgeid\":\"08D01475\",\
@@ -134,27 +141,20 @@ public class TAS {
         //Absenteesim percentage should be returned as a double value. 
         double percentage = 0; 
         double totalweekMin = 0; 
-        final double FOURTYHOURS = 2400; 
+        //final double FOURTYHOURS = 2400; 
+        double shiftmins = (s.shiftduration - s.lunchduration) * 5;
         final double TOP_PERCENTAGE = 100; 
-        //Get schedule 
-        
-        //Get shift Duration9calculate by shift start and shift stop  minus(-) the lunch duration * 5
-        double sch = 1.0; 
         
         //Gets minutes
                 
         totalweekMin = calculateTotalMinutes(punchlist, s);
         System.out.println("totalweekMin " + totalweekMin);
         
-        percentage = Math.round((totalweekMin/FOURTYHOURS) * TOP_PERCENTAGE);
-        System.out.println("percentage1 " + percentage);
+        percentage = Math.round(TOP_PERCENTAGE * (totalweekMin/shiftmins));
+        System.out.println("percentage1 " + percentage + "shiftmins " + shiftmins);
         
         percentage = TOP_PERCENTAGE - percentage;
         System.out.println("percentage2 " + percentage);
-        
-        //The minutes you calculated up divided by the minutes schdueled. 
-        percentage =  (100 - ((double)totalweekMin) / ((double)sch) * 5);
-        
         
         return percentage;
     }
