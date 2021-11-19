@@ -359,6 +359,8 @@ public class TASDatabase {
                     
                     int punchid = resultset.getInt("id");
                     obje = getPunch(punchid);
+                    
+                    obje.adjust(s);
 
                     punchlist.add(obje);
                 }
@@ -368,7 +370,7 @@ public class TASDatabase {
             //FOURTH: return the collection.
         
         
-        }catch(SQLException e){ System.out.println("Error in getPayPeriodPunchList: " + e); }
+        }catch(Exception e){ e.printStackTrace(); }
         
         
         //getPunch method from and retrun the objects.

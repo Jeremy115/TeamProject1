@@ -17,7 +17,7 @@ public class TAS {
         TASDatabase database = new TASDatabase();
         
         //Deine the punch, badge, shift instances coming in from the database.
-        Punch p = database.getPunch(69);
+        Punch p = database.getPunch(3634);
         Badge b = p.getBadge();
         Shift s = database.getShift(b);
         
@@ -37,7 +37,7 @@ public class TAS {
         try{
             
             //get the punchlist to compare the time between them. 
-            for(int i = 0; i < dailypunchlist.size(); i ++){
+            for(int i = 0; i < dailypunchlist.size(); i += 2){
                 
                 System.out.println("i = " + i + " daily punch list " + dailypunchlist.get(i).getAdjustedtimestamp());
 
@@ -48,9 +48,33 @@ public class TAS {
                 //Probably have to group by DAY of week not just all punches for the badge/payperiod
                 Duration dur = Duration.between(dailypunchlist.get(i).getAdjustedtimestamp(), dailypunchlist.get(i+1).getAdjustedtimestamp());
                 
+                //
+                
+                //Keep track 
+                
+                //CLOCK OUT
+                //CLOCK IN  BEGINNING (FLAG) TRUE 
+                //CLOCK IN  THROW AWAY DUPLICATE TOTAL
+                //CLOCK OUT CLOSE PAIR (FLAG)  FALSE 
+                //CLOCK IN 
+                
+                //INSIDE = FALSE
+                //TOTAL = A + B
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 // accumulates time of minutes between the adjustedtimestamps.
                 int minutesTotal = (int)dur.toMinutes();
                 System.out.println("minutes between i and i+1 = " + minutesTotal);  
+                
                 
                 //adds up the total time between them.
                 time = time + minutesTotal;
@@ -59,22 +83,22 @@ public class TAS {
                 System.out.println("accumulation of minutesTotal = " + time);     
             }
             
-                //true of false flag to see if they clocked out on time. 
-               boolean clockout = false;
-               //Get the list of punches to test if we need to deduct time from the shift. 
-               for(Punch p : dailypunchlist){ 
-                      //If the time equals the lunchstart, then we can skip the check and move on.
-                      //If the time is off then the below if will deduct the time of the lunch duration.
-                    if (p.getAdjustedtimestamp().toLocalTime().equals(shift.getLunchStart())){
+            //true of false flag to see if they clocked out on time. 
+           boolean clockout = false;
+           //Get the list of punches to test if we need to deduct time from the shift. 
+           for(Punch p : dailypunchlist){ 
+                  //If the time equals the lunchstart, then we can skip the check and move on.
+                  //If the time is off then the below if will deduct the time of the lunch duration.
+                if (p.getAdjustedtimestamp().toLocalTime().equals(shift.getLunchStart())){
 
-                        clockout = true; 
-                        break;
-                     }
-               }
-               //If the clock out remains false, it will mean that we need to deduct the time from the shift. 
-               if(!clockout){
-                   time = (int) (time - shift.getlunchduration());
-               }
+                    clockout = true; 
+                    break;
+                 }
+           }
+           //If the clock out remains false, it will mean that we need to deduct the time from the shift. 
+           if(!clockout){
+               time = (int) (time - shift.getlunchduration());
+           }
                
         }//Exceptions for the 2nd test in the feature 4 test. 
         catch(IndexOutOfBoundsException e){System.out.println("calculateTotalMinutes Error!" + e);} 
